@@ -5,13 +5,15 @@ import Home from './Home';
 import Footer from './Footer';
 import Signup from './Signup';
 import Login from './Login';
+import BasicTabs from './BasicTabs';
 function App() {
   return (
     <div>
   <Navbar/>
+  <BasicTabs/>
   {/* <Home/> */}
   {/* <Signup/> */}
-  <Login/>
+  {/* <Login/> */}
   <Footer/>
     </div>
   );
