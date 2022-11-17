@@ -1,11 +1,10 @@
-import { Typography } from "@mui/material";
-import  Grid  from '@material-ui/core/Grid'
+import { Typography , Grid} from "@mui/material";
 import {Button} from "@mui/material";
-import pic from './Images/test.svg';
-import qpic from './Images/question.svg';
-import ActionAreaCard from "./Components/Card";
+import pic from '../Images/test.svg';
+import qpic from '../Images/question.svg';
+import ActionAreaCard from "../Components/Card";
 import {Box} from "@mui/material";
-import bullet from './Icons/bulletpoint.png';
+import bullet from '../Icons/bulletpoint.png';
 const Home = () => {
     const data = [
         {title:'Face Recognition' , description:"User authentication using face detection making sure that the genuine candidate takes the test and no other person is along with the candidate." , icon: './Icons.audio.png'} ,

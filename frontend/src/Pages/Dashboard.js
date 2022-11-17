@@ -1,6 +1,6 @@
 import { Grid } from "@mui/material";
-import OngoingExam from "./OngoingExam";
-import Exammanager from "./Exammanager";
+import OngoingExam from "../Components/OngoingExam";
+import Exammanager from "../Components/Exammanager";
 
 const Dashboard = () => {
  return (

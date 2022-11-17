@@ -4,6 +4,7 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Dashboard from './Dashboard';
+import Report from './Report';
 import QuestionBank from './QuestionBank';
 
 function TabPanel(props) {
@@ -46,7 +47,7 @@ export default function BasicTabs() {
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Dashboard" {...a11yProps(0)} />
           <Tab label="Question Bank" {...a11yProps(1)} />
-          <Tab label="Setting" {...a11yProps(2)} />
+          <Tab label="Report" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
@@ -56,7 +57,7 @@ export default function BasicTabs() {
        <QuestionBank/>
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <Report/>
       </TabPanel>
     </Box>
   );

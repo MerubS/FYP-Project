@@ -5,7 +5,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Grid , Card , CardContent , Button } from '@mui/material';
-const QuestionTable = () => {
+const DTable = (props) => {
     const rows = [
         {name: 'Software Engineering' , status: 'Start', time:'06:00' , level:'medium'},
         {name: 'Agile Practices' , status: 'Resume' , time:'03:23', level:'hard'}
@@ -18,10 +18,9 @@ const QuestionTable = () => {
         <TableHead>
           <TableRow>
             <TableCell > Sno </TableCell>
-            <TableCell align="center"> Question </TableCell>
-            <TableCell align="center"> Difficulty </TableCell>
-            <TableCell align="center"> Time </TableCell>
-            <TableCell align="center"> Option </TableCell>
+            {props.heading.map((head)=> (
+              <TableCell align='center'> {head} </TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,4 +43,4 @@ const QuestionTable = () => {
  );
 }
 
-export default QuestionTable;
+export default DTable;

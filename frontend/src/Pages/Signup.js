@@ -1,8 +1,6 @@
-import { Typography , TextField , Button , Box} from '@material-ui/core';
-import  Grid  from '@material-ui/core/Grid';
-import examiner from './Images/examiner.svg';
-import examinee from './Images/examinee.svg';
-import { style } from '@mui/system';
+import { Typography , TextField , Button , Box , Grid} from '@mui/material';
+import examiner from '../Images/examiner.svg';
+import examinee from '../Images/examinee.svg';
 const Signup = () => {
  return (
     <Grid container alignItems="center" justifyContent='center' style={{ padding:'50px'}}>

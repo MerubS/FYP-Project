@@ -1,6 +1,5 @@
-import { Typography , TextField , Button } from '@material-ui/core';
-import  Grid  from '@material-ui/core/Grid';
-import hi from './Images/login.svg';
+import { Typography , TextField , Button , Grid} from '@mui/material';
+import hi from '../Images/login.svg';
 const Login = () => {
  return (
     <Grid container alignItems="center" justifyContent='center' style={{ padding:'50px' , paddingTop:'15px'}}>
