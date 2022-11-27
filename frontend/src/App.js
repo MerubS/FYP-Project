@@ -4,20 +4,29 @@ import Footer from "./Components/Footer"
 import TabPanel from "./Pages/BasicTabs"
 import Home from "./Pages/Home"
 import Login from "./Pages/Login"
-import Signup from "./Pages/Signup"
+import Register from "./Pages/Register"
 import Uploadpic from "./Pages/Uploadpic"
+import Test from "./Pages/Test"
 import './App.css';
+import { useState , useEffect } from "react"
 
 function App() {
+  // const [data, setData] = useState(null);
+  // useEffect(() => {
+  //   fetch("/databaseconnection")
+  //     .then((res) => res.json())
+  //     .then((data) => setData(data.message));
+  // }, []);
+
   return (
     <div className="App">
-      {/* <Uploadpic/> */}
-      <NavBar/>
+      {/* <NavBar/>
       <Home/>
-      <Login/>
-      <Signup/>
-      <TabPanel/>
-      <Footer/>
+      <Login/> */}
+      {/* <Register/> */}
+      <Test/>
+      {/* <TabPanel/> */}
+      {/* <Footer/> */}
     </div>
   );
 }

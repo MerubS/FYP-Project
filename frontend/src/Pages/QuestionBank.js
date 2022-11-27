@@ -2,14 +2,14 @@ import DTable from "../Components/Table"
 import { Grid , Box, Typography } from "@mui/material";
 import Fab from '@mui/material/Fab';
 import Add from '../Icons/add.svg';
-import QuestionDialogue from "../Components/QuestionDialogue";
+import CreateQuestion from "../Components/DialogueBox/CreateQuestion";
 import { useState } from "react";
 
 const QuestionBank = () => {
     const [open , setOpen] = useState(false);
     return(
        <Grid>
-        <QuestionDialogue open={open}/>
+        <CreateQuestion open={open}/>
        <DTable heading= {['Question', 'Difficulty', 'Time', 'Option']}/>
         <Grid container alignItems="left" justifyContent='left' style={{marginBottom:'25px'}}>
         <Fab color="primary" aria-label="add" onClick={()=>{setOpen(true)}}> 
