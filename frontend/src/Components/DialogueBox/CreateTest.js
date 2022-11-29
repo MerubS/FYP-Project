@@ -1,29 +1,64 @@
 import {Dialog, Button , DialogActions , DialogContent , Typography , TextField , DialogTitle, Grid, MenuItem} from '@mui/material';
 import { margin } from '@mui/system';
-import { useState } from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { useState , useEffect } from 'react';
+import { DataGrid } from '@mui/x-data-grid';
 
 const Createtest = (props) => {
-    // const handleChange = (event) => {
-    //     setData(event.target.value);
-    //   };
-      const columns = [
-        { field: 'id', headerName: 'ID', width: 20 },
-        { field: 'question', headerName: 'Question', width: 130 },
-        { field: 'difficulty', headerName: 'Diffculty', width: 130 },
+  console.log(props.open)
+  const [rows,setrows] = useState([]);
+  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:''});
+  const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
+  const [disable , setdisable] = useState(false);
+  useEffect(() => {
+      fetch("/api/retrievequestions")
+        .then((res) => res.json())
+        .then((data) => {setrows(data.recordset)
+          console.log("Data", data);});
+  
+      }, []);
+  const columns = [
+      { field: 'question', headerName: 'Question', width: 300 },
+      { field: 'difficulty', headerName: 'Difficulty', width: 130 },
+    ];
 
-      ];
-      const rows = [
-        {id:1, question: 1, difficulty: 'Snow'},
-        {id:2, question: 2, difficulty: 'Lannister'},
-        {id:3, question: 3, difficulty: 'Lannister' },
-        {id:4, question: 4, difficulty: 'Stark'},
-        {id:5, question: 5, difficulty: 'Targaryen'},
-        {id:6, question: 6, difficulty: 'Melisandre' },
-        {id:7, question: 7, difficulty: 'Clifford'},
-        {id:8, question: 8, difficulty: 'Frances'},
-        {id:9, question: 9, difficulty: 'Roxie'},
-      ];
+    // useEffect(() => {
+    //  console.log(testdata);
+  
+    //   }, [testdata]);
+
+const changehandler = (event) => {
+  // console.log(event.target.value);
+  // console.log(event.target.id);
+  switch (event.target.id) {
+    case 'nquestions':
+    case 'timelimit':
+      if (event.target.value < 0 ) {seterrors(prevState=>({
+        ...prevState, 
+        [event.target.id] : 'Cannot be negative'
+      }))
+    setdisable(true)
+    }
+      else {seterrors(prevState=>({
+        ...prevState, 
+        [event.target.id] : ''
+      }))
+    setdisable(false)
+  }
+    // case 'timelimit':
+    //   if (event.target.value < 0 ) {seterrors(prevState=>({
+    //     ...prevState, 
+    //     [event.target.id] : 'Cannot be negative'
+    //   }))}
+    //   else {seterrors(prevState=>({
+    //     ...prevState, 
+    //     [event.target.id] : ''
+    //   }))}
+  }
+       settestdata(prevState=>({
+        ...prevState,
+        [event.target.id] : event.target.value
+       }));
+}
 return (
 <Dialog
         open={props.open}
@@ -42,6 +77,8 @@ return (
               fullWidth
               variant="outlined"
               label="Name"
+              type="text"
+              onChange={changehandler}
             /> 
         </Grid>    
         <Grid container justifyContent="space-evenly">
@@ -52,6 +89,8 @@ return (
               fullWidth
               variant="outlined"
               label= "Description"
+              type="text"
+              onChange={changehandler}
               multiline
             /> 
         </Grid>
@@ -59,19 +98,27 @@ return (
         <Grid item xs={5}>
         <TextField
               autoFocus
+              error={errors.nquestions}
+              helperText = {errors.nquestions}
               margin="dense"
               id="nquestions"
               fullWidth
               variant="outlined"
               label= "No.of Questions"
+              type="number"
+              onChange={changehandler}
             /> 
             <TextField
               autoFocus
+              error={errors.timelimit}
+              helperText = {errors.timelimit}
               margin="dense"
               id="timelimit"
               fullWidth
               variant="outlined"
               label= "Timelimit"
+              type= "number"
+              onChange={changehandler}
             />    
         </Grid>
         <Grid item xs={5}>
@@ -83,6 +130,11 @@ return (
               fullWidth
               variant="outlined"
               label= "Difficulty"
+              onChange={changehandler}
+              SelectProps={{
+                native: true,
+              }}
+    
             >
         <option> Easy </option> 
         <option> Medium </option>
@@ -96,6 +148,10 @@ return (
               fullWidth
               variant="outlined"
               label= "Unit"
+              onChange={changehandler}
+              SelectProps={{
+                native: true,
+              }}
             >
                  <option> Hour </option> 
         <option> Minute </option>
@@ -115,8 +171,8 @@ return (
       </Grid>
         </DialogContent>
         <DialogActions>
-          <Button variant='contained' style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
-          <Button variant='contained' style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}> Cancel </Button>
+          <Button variant='contained' disabled={disable} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
+          <Button variant='contained' onClick={()=>{props.setopen()}} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}> Cancel </Button>
         </DialogActions>
       </Dialog>
   );

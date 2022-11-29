@@ -1,8 +1,9 @@
 const sql = require("mssql");
 const {sqlConfig} = require("./config.js");
 
+let connection 
 const databaseconnection = () => {
-    let connection = sql.connect(sqlConfig,(err)=>{
+    connection = sql.connect(sqlConfig,(err)=>{
         if(err) {
             console.log(err)
         }
@@ -10,8 +11,11 @@ const databaseconnection = () => {
             console.log('Database is connected');
         }
     })
+    let connectionpool = new sql.ConnectionPool(sqlConfig);
+    // console.log(connection, connectionpool)
 }
 
 module.exports = {
-    databaseconnection
+    databaseconnection,
+    connection
 }
