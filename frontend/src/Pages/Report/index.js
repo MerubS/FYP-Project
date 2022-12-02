@@ -1,14 +1,14 @@
-import DTable from "../../Components/Table";
+import axios from "axios";
 import { Grid } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
 import { useState ,useEffect} from "react";
 const Report = () => {
     const [rows,setrows] = useState([]);
     useEffect(() => {
-        fetch("/api/retrievereports")
-          .then((res) => res.json())
-          .then((data) => {setrows(data.recordset)
-            console.log("Data", data);});
+      axios.get('/api/retrievereports')
+      .then(function (response) {
+        setrows(response.data.recordset);
+      })
     
         }, []);
     const columns = [

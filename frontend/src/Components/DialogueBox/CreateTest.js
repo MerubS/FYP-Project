@@ -1,34 +1,39 @@
 import {Dialog, Button , DialogActions , DialogContent , Typography , TextField , DialogTitle, Grid, MenuItem} from '@mui/material';
 import { margin } from '@mui/system';
+import axios from 'axios';
 import { useState , useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const Createtest = (props) => {
   console.log(props.open)
+  let  selectedRowsData;
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:''});
+  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
+
+  const onRowsSelectionHandler = (ids) => {
+    const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
+    settestdata(prevState=>({
+      ...prevState,
+      selectedques : selectedRowsData
+    }))
+    console.log(selectedRowsData);
+  };
+
   useEffect(() => {
-      fetch("/api/retrievequestions")
-        .then((res) => res.json())
-        .then((data) => {setrows(data.recordset)
-          console.log("Data", data);});
+    axios.get('/api/retrievequestions')
+    .then(function (response) {
+      setrows(response.data.recordset);
   
-      }, []);
+      }) }, []);
   const columns = [
       { field: 'question', headerName: 'Question', width: 300 },
       { field: 'difficulty', headerName: 'Difficulty', width: 130 },
     ];
 
-    // useEffect(() => {
-    //  console.log(testdata);
-  
-    //   }, [testdata]);
-
 const changehandler = (event) => {
-  // console.log(event.target.value);
-  // console.log(event.target.id);
+  console.log(testdata)
   switch (event.target.id) {
     case 'nquestions':
     case 'timelimit':
@@ -44,25 +49,34 @@ const changehandler = (event) => {
       }))
     setdisable(false)
   }
-    // case 'timelimit':
-    //   if (event.target.value < 0 ) {seterrors(prevState=>({
-    //     ...prevState, 
-    //     [event.target.id] : 'Cannot be negative'
-    //   }))}
-    //   else {seterrors(prevState=>({
-    //     ...prevState, 
-    //     [event.target.id] : ''
-    //   }))}
   }
        settestdata(prevState=>({
         ...prevState,
         [event.target.id] : event.target.value
        }));
 }
+
+const onSubmit = async () => {
+  if (testdata.name !== '' && testdata.description !== '' && testdata.nquestions!=='' 
+  && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
+
+    try {
+      const resp = await axios.post('http://localhost:5000/api/inserttest',testdata);
+      console.log(resp.data.message);
+      // Push route to the test page
+     }
+     catch (error) {
+         console.log(error.response);
+     }
+  }
+  else {
+ console.log("Not complete");
+}
+}
+
 return (
 <Dialog
         open={props.open}
-        // onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -153,8 +167,8 @@ return (
                 native: true,
               }}
             >
-                 <option> Hour </option> 
-        <option> Minute </option>
+                 <option> hr </option> 
+        <option> min </option>
                 </TextField> 
 
         </Grid>
@@ -166,12 +180,13 @@ return (
         columns={columns}
         pageSize={10}
         rowsPerPageOptions={[10]}
+        onSelectionModelChange={(ids) => onRowsSelectionHandler(ids)}
         checkboxSelection
         />
       </Grid>
         </DialogContent>
         <DialogActions>
-          <Button variant='contained' disabled={disable} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
+          <Button variant='contained' disabled={disable} onClick={onSubmit} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
           <Button variant='contained' onClick={()=>{props.setopen()}} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}> Cancel </Button>
         </DialogActions>
       </Dialog>

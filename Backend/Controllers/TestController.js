@@ -46,15 +46,7 @@ const retrievetests = (req,res) => {
         console.log(error)
     }
 }
-const inserttest = (req,res) => {
-    try{
 
-    }
-    catch {
-
-    }
-}
 module.exports = {
     retrievetests,
-    inserttest
 }

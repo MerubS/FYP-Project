@@ -2,6 +2,7 @@ import { Grid , Box, Typography } from "@mui/material";
 import Fab from '@mui/material/Fab';
 import Add from '../../Icons/add.svg';
 import CreateQuestion from "../../Components/DialogueBox/CreateQuestion";
+import axios from "axios";
 import { DataGrid } from '@mui/x-data-grid';
 import { useState ,useEffect} from "react";
 
@@ -9,10 +10,10 @@ const QuestionBank = () => {
     const [open , setOpen] = useState(false);
     const [rows,setrows] = useState([]);
     useEffect(() => {
-        fetch("/api/retrievequestions")
-          .then((res) => res.json())
-          .then((data) => {setrows(data.recordset)
-            console.log("Data", data);});
+      axios.get('/api/retrievequestions')
+    .then(function (response) {
+      setrows(response.data.recordset);
+    })
     
         }, []);
     const columns = [

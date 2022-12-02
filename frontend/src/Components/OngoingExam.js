@@ -1,33 +1,20 @@
 import { Card , Typography , CardContent , CardActions , Button , Grid } from "@mui/material";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import axios from "axios";
 import { DataGrid } from '@mui/x-data-grid';
 import { useState, useEffect } from "react";
 
 
 const OngoingExam = () => {
-  const [testdata,settestdata] = useState(null);
   const [load,setload] =useState(false);
   const [rows,setrows] = useState([]);
   useEffect(() => {
-    fetch("/api/retreive")
-      .then((res) => res.json())
-      .then((data) => {setrows(data.recordset)
-        console.log("Data", data);});
+    axios.get('/api/retreive')
+    .then(function (response) {
+      setrows(response.data.recordset);
+    })
 
     }, []);
 
-    useEffect(() => {
-      console.log("Testdata", testdata);
-      if (testdata !== null) {
-      setload(true);
-      }
-      }, [testdata]);
-      
       // const rows = [
       //   {name: 'Software Engineering' , status: 'Start' , color:'blue'},
       //   {name: 'Agile Practices' , status: 'Resume' , color:'orange'}
