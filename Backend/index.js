@@ -96,3 +96,37 @@ catch (error) {
     console.log(error)
 }
 });
+
+
+app.post('/api/insertquestion', express.json() , function(req,res) {
+  console.log(req.body);
+  try {
+    let {question , difficulty , option1, option2,option3 , option4 , answer} = req.body;
+    let options = option1.concat(",",option2).concat(",",option3).concat(",",option4)
+    console.log(options)
+    sql.connect(sqlConfig)    
+    .then(function () {
+        var req = new sql.Request();
+        req.verbose = true;
+        let query = `INSERT INTO Question (question_id, examiner_id , difficulty , answer , question , options  ) VALUES (@qid , @eid , @qdifficulty , @qanswer , @qquestion , @qoptions)`;
+        req.input('qquestion', sql.Text , question)
+        req.input('qdifficulty', sql.NChar(10) , difficulty)
+        req.input('qoptions', sql.Text, options)
+        req.input('qanswer',sql.Text, answer)
+        req.input('qid', sql.Int, 10)
+        req.input('eid',sql.Int, 1)
+        req.query(query, (err, rows) => {
+              if (err) throw err;
+              console.log("Row inserted with id");
+              res.send({message: "Test Saved"});
+          });
+    }
+    )
+    .catch(function (err) {
+        console.error(err);
+    });
+}
+catch (error) {
+    console.log(error)
+}
+} );

@@ -8,6 +8,7 @@ const Report = () => {
       axios.get('/api/retrievereports')
       .then(function (response) {
         setrows(response.data.recordset);
+        console.log(response.data.recordset);
       })
     
         }, []);
@@ -28,7 +29,6 @@ const Report = () => {
      columns={columns}
      pageSize={10}
      rowsPerPageOptions={[10]}
-     getRowId = {rows.test_id + rows.candidate_id}
      checkboxSelection 
       />
    </Grid>

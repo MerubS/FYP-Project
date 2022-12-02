@@ -22,7 +22,7 @@ const QuestionBank = () => {
       ];
     return(
        <Grid>
-        <CreateQuestion open={open}/>
+        <CreateQuestion open={open} setopen={()=>{setOpen(false)}}/>
        <Grid container sx={{height:'70vh',marginTop:3, marginBottom:3}}>
     <DataGrid
      rows={rows}

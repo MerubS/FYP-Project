@@ -1,6 +1,61 @@
-import {Dialog, Button , DialogActions , DialogContent , Typography , TextField , DialogTitle, Grid, MenuItem} from '@mui/material';
+import {Dialog, Button , DialogActions , DialogContent , TextField , DialogTitle, Grid, MenuItem, Checkbox} from '@mui/material';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+
 const CreateQuestion = (props) => {
- return (
+  const [questiondata,setquestiondata] = useState({question:'' , difficulty:'' , answer:'' , option1: '' ,  option2: '',  option3: '',  option4: '' })
+  const onChangeHandler = (event) => {
+    setquestiondata(prevState=>({
+      ...prevState,
+      [event.target.id] : event.target.value
+    }))
+  }
+  const onCheckHandler = (event) => {
+    let lanswer;
+    if (event.target.checked){
+      switch (event.target.id) {
+        case 'checkbox1':
+          lanswer = questiondata.option1;
+        break;
+        case 'checkbox2':
+          lanswer = questiondata.option2;
+        break;
+        case 'checkbox3':
+          lanswer = questiondata.option3;
+        break;
+        case 'checkbox4':
+          lanswer = questiondata.option4;
+      }
+      setquestiondata(prevState=>({
+        ...prevState,
+        answer : lanswer
+      }))
+  }}
+ 
+  useEffect(()=>{
+  console.log(questiondata);
+  },[questiondata])
+ 
+ 
+  const onSubmit = async () =>{
+    if (questiondata.question !== '' && questiondata.difficulty !== '' && questiondata.option1 !== '' &&
+    questiondata.option2 !== '' && questiondata.option3 !== '' && questiondata.option4 !== '' ){
+      
+    try {
+      const resp = await axios.post('http://localhost:5000/api/insertquestion',questiondata);
+      console.log(resp.data.message);
+     }
+     catch (error) {
+         console.log(error.response);
+     }
+  }
+  else {
+ console.log("Not complete");
+}
+  }
+ 
+ 
+  return (
     <Dialog
     open={props.open}
     // onClose={handleClose}
@@ -18,6 +73,7 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="outlined"
           label="Question"
+          onChange={onChangeHandler}
         /> 
     </Grid>    
     <Grid container justifyContent="space-evenly">
@@ -28,6 +84,10 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="outlined"
           label= "Difficulty"
+          onChange={onChangeHandler}
+          SelectProps={{
+            native: true,
+          }}
           select
         >
             <option> Easy </option>
@@ -35,16 +95,94 @@ const CreateQuestion = (props) => {
             <option> Hard </option>
             </TextField> 
     </Grid>
-   <Grid container justifyContent="space-evenly">
+    <Grid container sx={{padding:'10px'}}>
+      <Grid xs={9}>
+      <TextField
+          autoFocus
+          margin="dense"
+          id="option1"
+          fullWidth
+          variant="standard"
+          label= "Option1"
+          onChange={onChangeHandler}
+        /> 
+      </Grid>
+      <Grid xs = {2}>
+      <Checkbox
+      onChange={onCheckHandler}
+      id="checkbox1"
+      sx={{marginTop:'15px'}}
+      />
+      </Grid>
+      <Grid xs={9}>
+      <TextField
+          autoFocus
+          margin="dense"
+          id="option2"
+          fullWidth
+          variant="standard"
+          label= "Option2"
+          onChange={onChangeHandler}
+        /> 
+      </Grid>
+      <Grid xs = {2}>
+      <Checkbox
+      id="checkbox2"
+      onChange={onCheckHandler}
+      sx={{marginTop:'15px'}}
+      />
+      </Grid>
+      <Grid xs={9}>
+      <TextField
+          autoFocus
+          margin="dense"
+          id="option3"
+          fullWidth
+          variant="standard"
+          label= "Option3"
+          onChange={onChangeHandler}
+        /> 
+      </Grid>
+      <Grid xs = {2}>
+      <Checkbox
+      id="checkbox3"
+      onChange={onCheckHandler}
+      sx={{marginTop:'15px'}}
+      />
+      </Grid>
+      <Grid xs={9}>
+      <TextField
+          autoFocus
+          margin="dense"
+          id="option4"
+          fullWidth
+          variant="standard"
+          label= "Option4"
+          onChange={onChangeHandler}
+        /> 
+      </Grid>
+      <Grid xs = {2}>
+      <Checkbox
+      id="checkbox4"
+      onChange={onCheckHandler}
+      sx={{marginTop:'15px'}}
+      />
+      </Grid>
+    </Grid>
+   {/* <Grid container justifyContent="space-evenly">
     <Grid item xs={5}>
     <TextField
           autoFocus
           margin="dense"
           id="option1"
           fullWidth
-          variant="outlined"
+          variant="standard"
           label= "Option1"
+          onChange={onChangeHandler}
         /> 
+      <Checkbox
+      id="option1"
+      />
         <TextField
           autoFocus
           margin="dense"
@@ -52,6 +190,7 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="outlined"
           label= "Option2"
+          onChange={onChangeHandler}
         />    
     </Grid>
     <Grid item xs={5}>
@@ -62,25 +201,27 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="outlined"
           label= "Option3"
+          onChange={onChangeHandler}
         >
     </TextField> 
        <TextField
           autoFocus
           margin="dense"
-          id="option3"
+          id="option4"
           fullWidth
           variant="outlined"
-          label= "Option3"
+          label= "Option4"
+          onChange={onChangeHandler}
         >
             </TextField> 
 
-    </Grid>
-   </Grid>
+    </Grid> */}
+   {/* </Grid> */}
    </form>
    </DialogContent>
    <DialogActions>
-          <Button variant='contained' style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
-          <Button variant='contained' style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}> Cancel </Button>
+          <Button variant='contained' onClick={onSubmit} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>Submit</Button>
+          <Button variant='contained'  onClick={()=>{props.setopen()}} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}> Cancel </Button>
         </DialogActions>
    </Dialog>
  );
