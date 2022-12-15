@@ -9,7 +9,6 @@ import Uploadpic from "./Pages/Uploadpic"
 import Test from "./Pages/Test"
 import './App.css';
 import { useState , useEffect } from "react"
-import TeacherData from "./Teacherdata"
 
 function App() {
   const [data, setData] = useState(null);
@@ -17,12 +16,11 @@ function App() {
 
   return (
    <>
-   <TeacherData/>
       {/* <NavBar/>
       <Home/>
       <Login/> */}
       {/* <Register/> */}
-      {/* <Test/> */}
+      <Test/>
       {/* <TabPanel/> */}
       {/* <Footer/> */}
       

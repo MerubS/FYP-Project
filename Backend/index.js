@@ -12,18 +12,59 @@ var cors = require('cors')
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
   databsase.databaseconnection();
-  // report.retrievereports(req,res);
-  // test.retreiveQuery();
-  // app.use("/api/retrievereports",(req,res)=>{
-  //   report.retrievereports(req,res);
-  // })
-
 });
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/api/getQuestionbyTestid", (req,res)=>{
+  console.log("Retreived by Test id" , req.query.id);
+ let testid = req.query.id;
+ let questionsdata ;
+ try {
+  sql.connect(sqlConfig)    
+  .then(function () {
+      console.log('CONNECTED');
+      var req = new sql.Request();
+      req.verbose = true;
+      req.input('tid', sql.Int , testid)
+      req.query('Select * from Question , Testcontains where testcontains.question_id = question.question_id AND testcontains.test_id = @tid').then(function (recordset) {
+        res.json(recordset);
+      })
+      .catch(function (err) {
+          console.error(err);
+      });
+
+}) }
+catch (error) {
+  console.log(error)
+}
+})
+
+
 app.get("/api/retreive",(req,res)=>{
-test.retrievetests(req,res);
+  try {
+    sql.connect(sqlConfig)    
+    .then(function () {
+        console.log('CONNECTED');
+        var req = new sql.Request();
+        req.verbose = true;
+        req.query('select *,test_id as id from test').then(function (recordset) {
+            console.log('COMPLETE');
+            // console.dir(recordset);
+            res.json(recordset);
+        })
+        .catch(function (err) {
+            console.error(err);
+        });
+    })
+    .catch(function (err) {
+        console.error(err);
+    });
+}
+catch (error) {
+    console.log(error)
+}
 })
 
 app.get("/api/retrievereports",(req,res)=>{
@@ -33,6 +74,34 @@ app.get("/api/retrievereports",(req,res)=>{
 
 app.get("/api/retrievequestions",(req,res)=>{
   question.retrievequestions(req,res);
+})
+
+app.get("/api/getbyidTest",(req,res)=>{
+ console.log("Retreived by Test id" , req.query.id);
+ let testid = req.query.id;
+ try {
+  sql.connect(sqlConfig)    
+  .then(function () {
+      console.log('CONNECTED');
+      var req = new sql.Request();
+      req.verbose = true;
+      req.input('tid', sql.Int , testid)
+      req.query('select * from test where test_id = @tid').then(function (recordset) {
+          console.log('COMPLETE');
+          // console.dir(recordset);
+          res.json(recordset);
+      })
+      .catch(function (err) {
+          console.error(err);
+      });
+  })
+  .catch(function (err) {
+      console.error(err);
+  });
+}
+catch (error) {
+  console.log(error)
+}
 })
 
 app.post('/api/inserttest', express.json() , function(req,res) {
@@ -51,13 +120,20 @@ app.post('/api/inserttest', express.json() , function(req,res) {
           req.input('ttlimit', sql.Numeric(18,0), timelimit)
           req.input('tunit',sql.NChar(10),unit)
           req.input('tstatus',sql.NChar(10),'created')
-          req.input('tid', sql.Int , 7)
+          req.input('tid', sql.Int , 9)
           req.input('teid', sql.Int , 1)
           req.query(query, (err, rows) => {
                 if (err) throw err;
                 console.log("Row inserted with id");
                 res.send({message: "Test Saved"});
             });
+          selectedques.map((q)=>{
+          req.query(`INSERT INTO TestContains (test_id, question_id ) VALUES (@tid,${q.question_id})`, (err, rows) => {
+                  if (err) throw err;
+                  console.log("Row inserted with id");
+                  // res.send({message: "Question Saved"});
+              });  
+            console.log("Question is",q.question_id)})
       })
       .catch(function (err) {
           console.error(err);
