@@ -1,5 +1,6 @@
-import { Card , Typography , CardContent , CardActions , Button , Grid } from "@mui/material";
+import { Button , Grid } from "@mui/material";
 import axios from "axios";
+import Stack from '@mui/material/Stack';
 import { DataGrid } from '@mui/x-data-grid';
 import { useState, useEffect } from "react";
 
@@ -15,16 +16,48 @@ const OngoingExam = () => {
 
     }, []);
 
-      // const rows = [
-      //   {name: 'Software Engineering' , status: 'Start' , color:'blue'},
-      //   {name: 'Agile Practices' , status: 'Resume' , color:'orange'}
-      // ];
+    const updatestatus = async (e,curr) =>{
+      console.log(curr)
+      if (curr.status == 'created   ') {
+        try {
+          const resp = await axios.post('http://localhost:5000/api/updatetest',{status:'started',test_id:curr.test_id , timelimit:curr.timelimit , unit: curr});
+          console.log(resp.data.message);
+         }
+         catch (error) {
+             console.log(error.response);
+         }
+      }
+
+      if (curr.status == 'started   ') {
+        try {
+          const resp = await axios.post('http://localhost:5000/api/updatetest',{status:'ended',test_id:curr.test_id});
+          console.log(resp.data.message);
+         }
+         catch (error) {
+             console.log(error.response);
+         }
+      }
+
+      // switch (status) {
+      //   case "created":
+      //     case "Created":
+      //     console.log("Hi")
+      //   break;
+      // }
+    }
+
     
       const columns = [
           // { field: 'test_id', headerName: 'ID', width: 20 },
           { field: 'name', headerName: 'Assessment Name', width: 130 },
           { field: 'description', headerName: 'Description', width: 130 },
-          { field: 'status', headerName: 'Status ', width: 130 },
+          { field: 'status', headerName: 'Status ', width: 130 , renderCell: (params) => {
+            return (
+              <Button variant="contained" size="small" onClick={(e)=>{updatestatus(e,params.row)}}>
+                {params.row.status}
+              </Button>
+            );
+          } , disableClickEventBubbling: true  },
           { field: 'timelimit' , headerName: 'Timelimit', width: 130 },
           { field: 'difficulty', headerName: 'Difficulty', width: 130 },
         ];
@@ -35,44 +68,12 @@ const OngoingExam = () => {
      columns={columns}
      pageSize={10}
      rowsPerPageOptions={[10]}
+     components={{
+      toolbar: CustomToolbar,
+    }}
      checkboxSelection 
+     disableSelectionOnClick
       />
-
-    {/* <TableContainer>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell > Assessment Name </TableCell>
-            <TableCell> Description </TableCell>
-            <TableCell align="center"> Status </TableCell>
-            <TableCell> Time limit </TableCell>
-            <TableCell> Difficulty </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {load && testdata.map((row,index) => (
-            <TableRow
-              key={index}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row" sx={{borderBottom:'none'}}>
-                {row.name}
-              </TableCell>
-              <TableCell component="th" scope="row" sx={{borderBottom:'none'}}>
-                {row.description}
-              </TableCell>
-              <TableCell align="center" sx={{borderBottom:'none'}}> <Button variant='outlined' sx={{color:row.color , borderColor:row.color}}> {row.status} </Button> </TableCell>
-              <TableCell component="th" scope="row" sx={{borderBottom:'none'}}>
-                {row.timelimit}
-              </TableCell>
-              <TableCell component="th" scope="row" sx={{borderBottom:'none'}}>
-                {row.difficulty}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer> */}
  </Grid>
  );
 

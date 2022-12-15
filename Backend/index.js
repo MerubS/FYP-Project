@@ -67,6 +67,62 @@ app.post('/api/inserttest', express.json() , function(req,res) {
       console.log(error)
   }
 } );
+const changetomillisecs = (start_date , timelimit , unit) => {
+  let msecs;  
+  if (unit == 'min       ') {
+      msecs = timelimit*60*1000;
+    }
+    else if (unit == 'hr       ' ) {
+      msecs = timelimit*60*60*1000;
+    }
+    let end_date = start_date.getTime() + msecs ;
+    end_date = new Date (end_date);
+    return end_date;
+}
+
+
+app.post('/api/updatetest', express.json() , function(req,res) {
+  console.log(req.body);
+  try {
+    let {test_id , status , timelimit , unit } = req.body;
+    sql.connect(sqlConfig)    
+    .then(function () {
+        var req = new sql.Request();
+        req.verbose = true;
+        if (status == 'started') {
+          let start_date = new Date();
+          console.log(start_date)
+          let end_date = changetomillisecs(start_date , timelimit , unit);
+        let query = `UPDATE Test SET status = @tstatus, start_date = @tsdate , end_date = @tedate WHERE test_id = @tid`;
+        req.input('tstatus', sql.NChar(10) , status)
+        req.input('tid', sql.Int , test_id)
+        req.input('tsdate' , sql.DateTime , start_date)
+        req.input('tedate', sql.DateTime , end_date)
+        req.query(query, (err, rows) => {
+              if (err) throw err;
+              console.log("Row Update Successfully");
+              res.send({message: "Status Changed"});
+          });
+        }
+      else if (status == 'ended') {
+        let query = `UPDATE Test SET status = @tstatus WHERE test_id = @tid`;
+        req.input('tstatus', sql.NChar(10) , status)
+        req.input('tid', sql.Int , test_id)
+        req.query(query, (err, rows) => {
+              if (err) throw err;
+              console.log("Row Update Successfully");
+              res.send({message: "Status Changed"});
+          });
+      }
+    })
+    .catch(function (err) {
+        console.error(err);
+    });
+}
+catch (error) {
+    console.log(error)
+}
+} );
 
 app.post('/api/insertcandidate', express.json(),  function (req, res) {
   try {
