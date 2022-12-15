@@ -1,0 +1,33 @@
+import Dashboard from "./Pages/Dashboard"
+import NavBar from "./Components/Navbar"
+import Footer from "./Components/Footer"
+import TabPanel from "./Pages/BasicTabs"
+import Home from "./Pages/Home"
+import Login from "./Pages/Login"
+import Register from "./Pages/Register"
+import Uploadpic from "./Pages/Uploadpic"
+import Test from "./Pages/Test"
+import './App.css';
+import { useState , useEffect } from "react"
+import TeacherData from "./Teacherdata"
+
+function App() {
+  const [data, setData] = useState(null);
+ 
+
+  return (
+   <>
+   <TeacherData/>
+      {/* <NavBar/>
+      <Home/>
+      <Login/> */}
+      {/* <Register/> */}
+      {/* <Test/> */}
+      {/* <TabPanel/> */}
+      {/* <Footer/> */}
+      
+    </>
+  );
+}
+
+export default App;
