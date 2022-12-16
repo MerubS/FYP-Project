@@ -2,9 +2,11 @@ import {Dialog, Button , DialogActions , DialogContent , TextField , DialogTitle
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const CreateQuestion = (props) => {
-  const [questiondata,setquestiondata] = useState({question:'' , difficulty:'' , answer:'' , option1: '' ,  option2: '',  option3: '',  option4: '' })
-  const [isEdit, setisEdit] = useState(false);
+const EditQuestion = (props) => {
+  const chars = props.row.options.split(',');
+  console.log(chars)
+  const [questiondata,setquestiondata] = useState({question_id:props.row.id , question:props.row.question , difficulty: props.row.difficulty  , answer:props.row.answer , option1: chars[0] ,  option2: chars[1],  option3: chars[2],  option4: chars[3] })
+  console.log(props.row);
   const onChangeHandler = (event) => {
     setquestiondata(prevState=>({
       ...prevState,
@@ -41,18 +43,17 @@ const CreateQuestion = (props) => {
   const onSubmit = async () =>{
     if (questiondata.question !== '' && questiondata.difficulty !== '' && questiondata.option1 !== '' &&
     questiondata.option2 !== '' && questiondata.option3 !== '' && questiondata.option4 !== '' ){
-      
-    try {
-      const resp = await axios.post('http://localhost:5000/api/insertquestion',questiondata);
-      console.log(resp.data.message);
-     }
-     catch (error) {
-         console.log(error.response);
-     }
-  }
-  else {
- console.log("Not complete");
-}
+      try {
+        const resp = await axios.post('http://localhost:5000/api/updatequesdetails',questiondata);
+        console.log(resp.data.message);
+       }
+       catch (error) {
+           console.log(error.response);
+       }
+    }
+    else {
+      console.log("Incomplete");
+    }
   }
  
  
@@ -63,7 +64,7 @@ const CreateQuestion = (props) => {
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >
-    <DialogTitle> Create Test </DialogTitle>
+    <DialogTitle> Edit Test </DialogTitle>
     <DialogContent>
         <form>
     <Grid container justifyContent="space-evenly">
@@ -72,6 +73,7 @@ const CreateQuestion = (props) => {
           margin="dense"
           id="question"
           fullWidth
+          value={questiondata.question}
           variant="outlined"
           label="Question"
           onChange={onChangeHandler}
@@ -85,11 +87,13 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="outlined"
           label= "Difficulty"
+          sele
+          defaultValue={questiondata.difficulty}
           onChange={onChangeHandler}
           SelectProps={{
             native: true,
           }}
-          select
+          select 
         >
             <option> Easy </option>
             <option> Medium </option>
@@ -104,6 +108,7 @@ const CreateQuestion = (props) => {
           id="option1"
           fullWidth
           variant="standard"
+          value={questiondata.option1}
           label= "Option1"
           onChange={onChangeHandler}
         /> 
@@ -112,6 +117,7 @@ const CreateQuestion = (props) => {
       <Checkbox
       onChange={onCheckHandler}
       id="checkbox1"
+      checked={questiondata.option1 == questiondata.answer? true : false}
       sx={{marginTop:'15px'}}
       />
       </Grid>
@@ -122,6 +128,7 @@ const CreateQuestion = (props) => {
           id="option2"
           fullWidth
           variant="standard"
+          value={questiondata.option2}
           label= "Option2"
           onChange={onChangeHandler}
         /> 
@@ -130,6 +137,7 @@ const CreateQuestion = (props) => {
       <Checkbox
       id="checkbox2"
       onChange={onCheckHandler}
+      checked={questiondata.option2 == questiondata.answer? true : false}
       sx={{marginTop:'15px'}}
       />
       </Grid>
@@ -141,12 +149,14 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="standard"
           label= "Option3"
+          value={questiondata.option3}
           onChange={onChangeHandler}
         /> 
       </Grid>
       <Grid xs = {2}>
       <Checkbox
       id="checkbox3"
+      checked={questiondata.option3 == questiondata.answer? true : false}
       onChange={onCheckHandler}
       sx={{marginTop:'15px'}}
       />
@@ -159,6 +169,7 @@ const CreateQuestion = (props) => {
           fullWidth
           variant="standard"
           label= "Option4"
+          value={questiondata.option4}
           onChange={onChangeHandler}
         /> 
       </Grid>
@@ -166,6 +177,7 @@ const CreateQuestion = (props) => {
       <Checkbox
       id="checkbox4"
       onChange={onCheckHandler}
+      checked={questiondata.option4 === questiondata.answer? true : false}
       sx={{marginTop:'15px'}}
       />
       </Grid>
@@ -180,4 +192,4 @@ const CreateQuestion = (props) => {
  );
 }
 
-export default CreateQuestion;
+export default EditQuestion;

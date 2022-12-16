@@ -4,10 +4,12 @@ import Exammanager from "../../Components/Exammanager";
 import Fab from '@mui/material/Fab';
 import Add from '../../Icons/add.svg';
 import Createtest from "../../Components/DialogueBox/CreateTest";
+import Edittest from "../../Components/DialogueBox/EditTest";
 import { useState } from "react";
 
 const Dashboard = () => {
   const [open , setOpen] = useState(false);
+  const [isEdit , setisEdit] = useState(false);
  return (
    <Grid container spacing={3}>
    <Grid item xs={6}>
@@ -18,6 +20,7 @@ const Dashboard = () => {
    </Grid>
    <Grid item xs={3}>
    {open && <Createtest open={open} setopen={()=>{setOpen(false)}}/>}
+   {isEdit && <Edittest open={isEdit} setopen={()=>{setisEdit(false)}}/>}
    </Grid>
    <Grid container alignItems="left" justifyContent='left' style={{margin:'25px'}}>
         <Fab color="primary" aria-label="add" onClick={()=>{setOpen(true)}}> 

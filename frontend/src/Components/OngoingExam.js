@@ -2,11 +2,14 @@ import { Button , Grid } from "@mui/material";
 import axios from "axios";
 import Stack from '@mui/material/Stack';
 import { DataGrid } from '@mui/x-data-grid';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { useState, useEffect } from "react";
 
 
 const OngoingExam = () => {
   const [load,setload] =useState(false);
+  const [currrow , setcurrrow] = useState();
   const [rows,setrows] = useState([]);
   useEffect(() => {
     axios.get('/api/retreive')
@@ -15,6 +18,13 @@ const OngoingExam = () => {
     })
 
     }, []);
+
+    const deletetest = () => {
+      axios.get('/api/deletetest',{params:{id:currrow}})
+    .then(function (response) {
+      console.log(response.message);         // Check wont show message
+    })
+    }
 
     const updatestatus = async (e,curr) =>{
       console.log(curr)
@@ -37,13 +47,6 @@ const OngoingExam = () => {
              console.log(error.response);
          }
       }
-
-      // switch (status) {
-      //   case "created":
-      //     case "Created":
-      //     console.log("Hi")
-      //   break;
-      // }
     }
 
     
@@ -63,13 +66,17 @@ const OngoingExam = () => {
         ];
  return(
    <Grid sx={{height:'50vh'}}>
+    <Grid container justifyContent='end' style={{padding:'5px'}}> 
+    <Button color="primary" size="medium" onClick={deletetest} startIcon={<DeleteIcon />}> </Button>
+    <Button color="primary" size="medium" startIcon={<EditIcon />}> </Button>
+     </Grid>
     <DataGrid
      rows={rows}
      columns={columns}
      pageSize={10}
      rowsPerPageOptions={[10]}
-     checkboxSelection 
-     disableSelectionOnClick
+     onRowClick={(e)=>{setcurrrow(e.id)}}
+   
       />
  </Grid>
  );

@@ -20,8 +20,8 @@ function App() {
       <Home/>
       <Login/> */}
       {/* <Register/> */}
-      <Test/>
-      {/* <TabPanel/> */}
+      {/* <Test/> */}
+      <TabPanel/>
       {/* <Footer/> */}
       
     </>

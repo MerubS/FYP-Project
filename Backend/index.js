@@ -20,7 +20,6 @@ app.use(express.json());
 app.get("/api/getQuestionbyTestid", (req,res)=>{
   console.log("Retreived by Test id" , req.query.id);
  let testid = req.query.id;
- let questionsdata ;
  try {
   sql.connect(sqlConfig)    
   .then(function () {
@@ -53,6 +52,60 @@ app.get("/api/retreive",(req,res)=>{
             console.log('COMPLETE');
             // console.dir(recordset);
             res.json(recordset);
+        })
+        .catch(function (err) {
+            console.error(err);
+        });
+    })
+    .catch(function (err) {
+        console.error(err);
+    });
+}
+catch (error) {
+    console.log(error)
+}
+})
+
+
+app.get("/api/deletetest",(req,res)=>{
+  console.log("Retreived by Test id" , req.query.id);
+  let testid = req.query.id;
+  try {
+    sql.connect(sqlConfig)    
+    .then(function () {
+        console.log('CONNECTED');
+        var req = new sql.Request();
+        req.verbose = true;
+        req.input('tid',sql.Int, testid)
+        req.query('Delete from Test where test_id = @tid;').then(function () {
+            res.json({message: 'Deleted'});
+        })
+        .catch(function (err) {
+            console.error(err);
+        });
+    })
+    .catch(function (err) {
+        console.error(err);
+    });
+}
+catch (error) {
+    console.log(error)
+}
+})
+
+
+app.get("/api/deletequestion",(req,res)=>{
+  console.log("Retreived by Question id" , req.query.id);
+  let questionid = req.query.id;
+  try {
+    sql.connect(sqlConfig)    
+    .then(function () {
+        console.log('CONNECTED');
+        var req = new sql.Request();
+        req.verbose = true;
+        req.input('qid',sql.Int, questionid)
+        req.query('Delete from Question where question_id = @qid;').then(function () {
+            res.json({message: 'Deleted'});
         })
         .catch(function (err) {
             console.error(err);
@@ -199,6 +252,78 @@ catch (error) {
     console.log(error)
 }
 } );
+
+app.post('/api/updatequesdetails', express.json(), function(req,res) {
+  try {
+    let {question_id , question , answer , difficulty , option1 , option2 , option3 , option4 } = req.body;
+    let options = option1.concat(",",option2).concat(",",option3).concat(",",option4);
+    console.log(question_id,question,answer,difficulty,option1,option2,option3,option4);
+    sql.connect(sqlConfig)    
+    .then(function () { 
+      var req = new sql.Request();
+      req.verbose = true;
+      let query = `UPDATE Question SET difficulty = @qdifficulty , answer = @qanswer , question = @qquestion , options = @qoptions where question_id = @qid`
+      req.input('qquestion', sql.Text , question)
+      req.input('qdifficulty', sql.NChar(10) , difficulty)
+      req.input('qoptions', sql.Text, options)
+      req.input('qanswer',sql.Text, answer)
+      req.input('qid',sql.Int,question_id)
+      req.query(query, (err, rows) => {
+        if (err) throw err;
+        console.log("Row inserted with id");
+        res.send({message: "Question Updated"});
+    });
+    })
+    .catch(function (err) {
+      console.error(err);
+  });  
+  }
+  catch (error) {
+    console.log(error)
+  }
+})
+
+app.post('/api/updatetestdetails', express.json(), function(req,res) {
+  try {
+    let {name , description, nquestions, difficulty,timelimit , unit , selectedques , test_id } = req.body;
+    sql.connect(sqlConfig)    
+      .then(function () {
+          var req = new sql.Request();
+          req.verbose = true;
+          let query = `UPDATE Test SET name = @tname ,  description = @tdes , no_questions = @tnques , difficulty = @tdifficulty , timelimit = @ttlimit , unit = @tunit  WHERE test_id = @tid`;
+          req.input('tname', sql.NChar(30) , name)
+          req.input('tdes', sql.Text , description)
+          req.input('tnques', sql.Numeric(18,0), nquestions)
+          req.input('tdifficulty',sql.Char(10), difficulty)
+          req.input('ttlimit', sql.Numeric(18,0), timelimit)
+          req.input('tunit',sql.NChar(10),unit)
+          req.input('tstatus',sql.NChar(10),'created')
+          req.input('tid', sql.Int , test_id)
+          req.input('teid', sql.Int , 1)
+          req.query(query, (err, rows) => {
+                if (err) throw err;
+                console.log("Row inserted with id");
+                res.send({message: "Test Updated"});
+            });
+            selectedques.map((q)=>{
+              req.query(`SELECT 1 AS result FROM TestContains WHERE test_id = @tid AND question_id = ${q.question_id}`).then(function (recordset) {
+                console.log(recordset.rowsAffected[0])
+                if (recordset.rowsAffected[0] == 0 ) {
+                  console.log(" Does not Exists");
+                  req.query(`INSERT INTO TestContains (test_id, question_id ) VALUES (@tid,${q.question_id})`, (err, rows) => {
+                    if (err) throw err;
+                    console.log("Row inserted with id");
+                });
+                }
+                console.dir(recordset);
+            }) 
+                console.log("Question is",q.question_id)})
+  }) }
+  catch (error) {
+    console.log(error)
+  }
+})
+
 
 app.post('/api/insertcandidate', express.json(),  function (req, res) {
   try {
