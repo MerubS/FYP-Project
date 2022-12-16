@@ -3,19 +3,33 @@ import examiner from '../../Images/examiner.svg';
 import examinee from '../../Images/examinee.svg';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { internal_processStyles } from '@mui/styled-engine';
+
 
 const Register = () => {
     const [registerdata , setregisterdata] = useState({cnic:0 , name: '' , email: '' , contact: '' , dob:'' , city:'' , gender:''});
     const [errors , seterrors] = useState({cnic:'' , email: '' , contact: '' , dob:''}) 
+    const [message, setmessage] = useState('');
     const [disable , setdisable] = useState(false);
+    const [testid , settesid] = useState('8');
 
     const onSubmit = async () => {
-       if (registerdata.city!=='' && registerdata.cnic!=='' && registerdata.contact!='' && registerdata.dob!='' && registerdata.email!=''
+        axios.get('/api/getbyidTest',{params:{id : testid}})
+    .then(function (response) {
+      console.log(response.data.recordset)
+      let [testdata] = response.data.recordset
+      if (testdata.status == 'ended     ') {
+        setmessage("Test has been ended by the examiner");
+      }
+      else if (testdata.status == 'created   ') {
+        setmessage("Test not started by the examiner");
+      }
+      else {
+      localStorage.setItem('Testdetails', JSON.stringify(testdata));
+         if (registerdata.city!=='' && registerdata.cnic!=='' && registerdata.contact!='' && registerdata.dob!='' && registerdata.email!=''
        && registerdata.gender!='' && registerdata.name!='') {
         console.log("Send");
        try {
-        const resp = await axios.post('http://localhost:5000/api/insertcandidate',registerdata);
+        const resp = axios.post('http://localhost:5000/api/insertcandidate',registerdata);
         console.log(resp.data.message);
         // Push route to the test page
        }
@@ -27,6 +41,8 @@ const Register = () => {
         console.log("Incomplete");
     }
 
+      }
+   })
 }
 
     useEffect(() => {
@@ -141,8 +157,7 @@ const Register = () => {
      <TextField id="city" label="City" variant="outlined" onChange={changehandler} style={{marginBottom:'20px'}} />
      <Button variant="contained" onClick={onSubmit} disabled={disable} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', marginBottom:'5px'}}> Register </Button>
      <Grid container alignItems="center" justifyContent='center' style={{marginBottom:'25px'}}>
-     <Typography> Your test will start in:  </Typography>
-     <Button> <u> Timer </u> </Button>
+     <Typography style={{color:'red'}}> {message}  </Typography>
      </Grid>
      </Grid>
     </Grid>
