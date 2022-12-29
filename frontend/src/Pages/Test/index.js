@@ -7,7 +7,7 @@ import { Box } from "@mui/system";
 const Test = () => {
   const [question,setquestions] = useState();
   const [loading , setloading] = useState(false);
-
+  const [answers,setanswers] = useState([]);
  useEffect(()=>{
   axios.get('/api/getQuestionbyTestid',{params:{id : '1'}})
   .then(function (response) {
@@ -17,11 +17,37 @@ const Test = () => {
 },[]);
 
 useEffect(()=>{
-  console.log(question)
-},[question]);
+  console.log(answers)
+});
 
 const Completionist = () => <span> Times up !</span>;
+const submitHandler = async () => {
+  console.log(answers)
+  try {
+    const resp = await axios.post('http://localhost:5000/api/generatereport', {question , answers , testid:1 , canid:1}  );
+    console.log(resp.data.message);
+   }
+   catch (error) {
+       console.log(error.response);
+   }
+}
+const changeHandler = (event, qid) => {
+  var r = answers.find(item => item.id === qid[0])
+  if (r) {
+    let objIndex = answers.findIndex((obj => obj.id == qid[0]));
+    answers[objIndex].value = event.target.value
 
+  }
+  else {
+    setanswers([ // with a new array
+    ...answers, // that contains all the old items
+    { value: event.target.value , id: qid[0]} // and one new item at the end
+  ])
+  }
+  console.log(r)
+  
+  console.log(event.target.value, qid[0])
+}
 const renderer = ({ hours, minutes, seconds, completed }) => {
   if (completed) {
     return <Completionist />;
@@ -46,6 +72,8 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         <Grid item xs={12}>
         <form>
     {loading && question.map((q)=>{
+      let a = q.options.split(',')
+      console.log(a)
       return (
       <FormControl sx={{display:'block', margin:'40px'}} variant="standard">
         <FormLabel>{q.question}</FormLabel>
@@ -53,19 +81,25 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
           aria-labelledby="demo-error-radios"
           name="quiz"
           // value={value}
-          // onChange={handleRadioChange}
-        >
-          <FormControlLabel value="best" control={<Radio />} label={q.options} />
-          <FormControlLabel value="worst" control={<Radio />} label={q.options} />
+          onChange={(e)=>{changeHandler(e,q.question_id)}}
+        >         
+        {a.map((o)=>{
+          return(
+       <FormControlLabel value={o} control={<Radio />} label={o} />
+          )
+        })}
         </RadioGroup>
-        {/* <FormHelperText>{helperText}</FormHelperText> */}
-      </FormControl>
+        </FormControl>
+        )
+    }
+        
+     
       )
-    })}
+    }
          </form> 
          </Grid>
          <Grid container justifyContent='center'>
-         <Button variant="contained" style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}}> Submit </Button>
+         <Button variant="contained" onClick={submitHandler} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}} > Submit </Button>
          </Grid>
         </Grid>
     </Grid>

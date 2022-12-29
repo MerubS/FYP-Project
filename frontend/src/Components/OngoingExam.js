@@ -5,10 +5,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState, useEffect } from "react";
+import Edittest from "./DialogueBox/EditTest";
 
 
-const OngoingExam = () => {
-  const [load,setload] =useState(false);
+const OngoingExam = ({callback}) => {
   const [currrow , setcurrrow] = useState();
   const [rows,setrows] = useState([]);
   useEffect(() => {
@@ -18,6 +18,8 @@ const OngoingExam = () => {
     })
 
     }, []);
+
+    const edittest = () => callback(currrow , true)
 
     const deletetest = () => {
       axios.get('/api/deletetest',{params:{id:currrow}})
@@ -68,14 +70,14 @@ const OngoingExam = () => {
    <Grid sx={{height:'50vh'}}>
     <Grid container justifyContent='end' style={{padding:'5px'}}> 
     <Button color="primary" size="medium" onClick={deletetest} startIcon={<DeleteIcon />}> </Button>
-    <Button color="primary" size="medium" startIcon={<EditIcon />}> </Button>
+    <Button color="primary" size="medium" onClick={edittest} startIcon={<EditIcon />}> </Button>
      </Grid>
     <DataGrid
      rows={rows}
      columns={columns}
      pageSize={10}
      rowsPerPageOptions={[10]}
-     onRowClick={(e)=>{setcurrrow(e.id)}}
+     onRowClick={(e)=>{setcurrrow(e.row)}}
    
       />
  </Grid>

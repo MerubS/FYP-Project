@@ -5,9 +5,8 @@ import { useState , useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const Edittest = (props) => {
-  console.log(props.open)
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
+  const [testdata , settestdata] = useState({test_id:props.row.test_id , name:props.row.name , description:props.row.description  , nquestions:props.row.no_questions , difficulty:props.row.difficulty , timelimit:props.row.timelimit , unit:props.row.unit , selectedques:props.row.selectedques});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
 
@@ -60,7 +59,8 @@ const onSubmit = async () => {
   && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
 
     try {
-    
+      const resp = await axios.post('http://localhost:5000/api/updatetestdetails',testdata);
+      console.log(resp.data.message);
      }
      catch (error) {
          console.log(error.response);
@@ -77,7 +77,7 @@ return (
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle> Create Test </DialogTitle>
+        <DialogTitle> Edit Test </DialogTitle>
         <DialogContent>
             <form>
         <Grid container justifyContent="space-evenly">
@@ -86,6 +86,7 @@ return (
               margin="dense"
               id="name"
               fullWidth
+              value={testdata.name}
               variant="outlined"
               label="Name"
               type="text"
@@ -98,6 +99,7 @@ return (
               margin="dense"
               id="description"
               fullWidth
+              value={testdata.description}
               variant="outlined"
               label= "Description"
               type="text"
@@ -112,6 +114,7 @@ return (
               error={errors.nquestions}
               helperText = {errors.nquestions}
               margin="dense"
+              value={testdata.nquestions}
               id="nquestions"
               fullWidth
               variant="outlined"
@@ -125,6 +128,7 @@ return (
               helperText = {errors.timelimit}
               margin="dense"
               id="timelimit"
+              value={testdata.timelimit}
               fullWidth
               variant="outlined"
               label= "Timelimit"
@@ -138,6 +142,7 @@ return (
               select
               margin="dense"
               id="difficulty"
+              value={testdata.difficulty}
               fullWidth
               variant="outlined"
               label= "Difficulty"
@@ -158,6 +163,7 @@ return (
               id="unit"
               fullWidth
               variant="outlined"
+              value={testdata.unit}
               label= "Unit"
               onChange={changehandler}
               SelectProps={{

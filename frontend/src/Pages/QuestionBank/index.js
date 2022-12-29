@@ -36,7 +36,6 @@ const QuestionBank = () => {
       ];
     return(
        <Grid>
-       {isEdit && <EditQuestion open={isEdit} setopen={()=>setisEdit(false)} row={currques}/> }
         <CreateQuestion open={open} setopen={()=>{setOpen(false)}}/>
        <Grid container sx={{height:'70vh',marginTop:2, marginBottom:6}}>
        <Grid container justifyContent='end' style={{padding:'3px'}}> 

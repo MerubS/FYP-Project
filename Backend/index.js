@@ -283,9 +283,48 @@ app.post('/api/updatequesdetails', express.json(), function(req,res) {
   }
 })
 
+
+app.post('/api/generatereport', express.json(), function(req,res) {
+    try {
+      let {question, answers, testid , canid } = req.body;
+      let totalquestion = question.length;
+      let correctanswers = 0;
+      let rans ;
+      answers.map((a)=>{
+        rans = a.value + '' + a.id + ','    
+        var r = question.find(item => item.question_id[0] === a.id)
+        if (r.answer == a.value) {
+          correctanswers++
+        }
+      })
+    let score = (correctanswers/totalquestion)*100;
+    console.log("Correct Answers are", correctanswers)
+    console.log("Score is", (correctanswers/totalquestion)*100)
+      sql.connect(sqlConfig)    
+        .then(function () {
+            var req = new sql.Request();
+            req.verbose = true;
+            let query = `UPDATE REPORT SET test_id = @tid ,  candidate_id = @cid , score = @rscore , answers = @ranswers`;
+            req.input('tid', sql.Int , testid )
+            req.input('cid', sql.Int , canid)
+            req.input('rscore', sql.Decimal, score )
+            req.input('ranswers',sql.Text, rans )
+            req.query(query, (err, rows) => {
+                  if (err) throw err;
+                  console.log("Row inserted with id");
+                  res.send({message: "Test Updated"});
+              });
+    }) 
+  }
+    catch (error) {
+      console.log(error)
+    }     
+})
+
 app.post('/api/updatetestdetails', express.json(), function(req,res) {
   try {
     let {name , description, nquestions, difficulty,timelimit , unit , selectedques , test_id } = req.body;
+    console.log(name,description,nquestions,difficulty,timelimit,unit,selectedques,test_id);
     sql.connect(sqlConfig)    
       .then(function () {
           var req = new sql.Request();
