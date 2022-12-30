@@ -11,7 +11,7 @@ const Createtest = (props) => {
   const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
-
+  const sendmessage = (show , message ) => props.callback( show , message)
   const onRowsSelectionHandler = (ids) => {
     const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
     settestdata(prevState=>({
@@ -63,10 +63,14 @@ const onSubmit = async () => {
     try {
       const resp = await axios.post('http://localhost:5000/api/inserttest',testdata);
       console.log(resp.data.message);
-      // Push route to the test page
+      if (resp.data.message === 'Success') {
+        sendmessage(true , true)
+        props.setopen()
+      }
      }
      catch (error) {
          console.log(error.response);
+         sendmessage(true , false)
      }
   }
   else {

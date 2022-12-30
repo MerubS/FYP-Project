@@ -78,10 +78,11 @@ app.get("/api/deletetest",(req,res)=>{
         req.verbose = true;
         req.input('tid',sql.Int, testid)
         req.query('Delete from Test where test_id = @tid;').then(function () {
-            res.json({message: 'Deleted'});
+            res.json({message: 'Success'});
         })
         .catch(function (err) {
             console.error(err);
+            res.json({message: 'Failed'});
         });
     })
     .catch(function (err) {
@@ -178,13 +179,13 @@ app.post('/api/inserttest', express.json() , function(req,res) {
           req.query(query, (err, rows) => {
                 if (err) throw err;
                 console.log("Row inserted with id");
-                res.send({message: "Test Saved"});
+                res.send({message: "Success"});
             });
           selectedques.map((q)=>{
           req.query(`INSERT INTO TestContains (test_id, question_id ) VALUES (@tid,${q.question_id})`, (err, rows) => {
                   if (err) throw err;
                   console.log("Row inserted with id");
-                  // res.send({message: "Question Saved"});
+
               });  
             console.log("Question is",q.question_id)})
       })
@@ -342,9 +343,10 @@ app.post('/api/updatetestdetails', express.json(), function(req,res) {
           req.query(query, (err, rows) => {
                 if (err) throw err;
                 console.log("Row inserted with id");
-                res.send({message: "Test Updated"});
+                res.send({message: "Success"});
             });
             selectedques.map((q)=>{
+              console.log(q.question_id)
               req.query(`SELECT 1 AS result FROM TestContains WHERE test_id = @tid AND question_id = ${q.question_id}`).then(function (recordset) {
                 console.log(recordset.rowsAffected[0])
                 if (recordset.rowsAffected[0] == 0 ) {

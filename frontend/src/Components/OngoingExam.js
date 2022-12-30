@@ -5,12 +5,13 @@ import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState, useEffect } from "react";
-import Edittest from "./DialogueBox/EditTest";
 
 
-const OngoingExam = ({callback}) => {
+
+const OngoingExam = (props) => {
   const [currrow , setcurrrow] = useState();
   const [rows,setrows] = useState([]);
+
   useEffect(() => {
     axios.get('/api/retreive')
     .then(function (response) {
@@ -19,12 +20,20 @@ const OngoingExam = ({callback}) => {
 
     }, []);
 
-    const edittest = () => callback(currrow , true)
+    const edittest = () => props.callback(currrow , true)
+    const sendmessage = (show , message ) => props.callbackmessage( show , message)
 
     const deletetest = () => {
-      axios.get('/api/deletetest',{params:{id:currrow}})
+      axios.get('/api/deletetest',{params:{id:currrow.test_id}})
     .then(function (response) {
-      console.log(response.message);         // Check wont show message
+      console.log(response.message); 
+      if (response.data.message === 'Success') {
+        sendmessage(true , true)
+        props.setopen()
+      }
+      else {
+        sendmessage(true , false)
+      }        // Check wont show message
     })
     }
 
