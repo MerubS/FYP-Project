@@ -8,12 +8,22 @@ import EditQuestion from "../../Components/DialogueBox/EditQuestion";
 import axios from "axios";
 import { DataGrid } from '@mui/x-data-grid';
 import { useState ,useEffect} from "react";
+import PositionedSnackbar from "../../Components/DialogueBox/Snackbar";
 
 const QuestionBank = () => {
     const [open , setOpen] = useState(false);
     const [rows,setrows] = useState([]);
     const [currques , setcurrques] = useState();
     const [isEdit , setisEdit] = useState(false);
+    const [sbar , setsbar] = useState({sopen:false , sstatus:''});
+
+    const showMessage = (open , status ) => {
+     setsbar ({
+      sopen : open,
+      sstatus: status
+     })
+    }
+
 
     useEffect(() => {
       axios.get('/api/retrievequestions')
@@ -26,7 +36,10 @@ const QuestionBank = () => {
    const deleteques = () => {
     axios.get('/api/deletequestion',{params:{id:currques.id}})
     .then(function (response) {
-      console.log(response.message);                //Check message wont show
+      console.log(response.data.message); 
+      if (response.data.message === 'Success') {
+      setsbar({sopen:true , sstatus:true})
+      }       
     })
         }
         
@@ -36,7 +49,9 @@ const QuestionBank = () => {
       ];
     return(
        <Grid>
-        <CreateQuestion open={open} setopen={()=>{setOpen(false)}}/>
+        {sbar.sopen && <PositionedSnackbar success={sbar.sstatus} open={sbar.sopen} handleClose={()=>{setsbar({sopen:false , sstatus:''})}}/>}
+        <CreateQuestion open={open} setopen={()=>{setOpen(false)}} callback={showMessage}/>
+        {isEdit && <EditQuestion open={isEdit} setopen={()=>{setisEdit(false)}} callback={showMessage} row={currques}/>}
        <Grid container sx={{height:'70vh',marginTop:2, marginBottom:6}}>
        <Grid container justifyContent='end' style={{padding:'3px'}}> 
     <Button color="primary" size="medium" onClick={deleteques} startIcon={<DeleteIcon />}> </Button>

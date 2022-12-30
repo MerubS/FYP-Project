@@ -105,7 +105,7 @@ app.get("/api/deletequestion",(req,res)=>{
         req.verbose = true;
         req.input('qid',sql.Int, questionid)
         req.query('Delete from Question where question_id = @qid;').then(function () {
-            res.json({message: 'Deleted'});
+            res.json({message: 'Success'});
         })
         .catch(function (err) {
             console.error(err);
@@ -271,7 +271,7 @@ app.post('/api/updatequesdetails', express.json(), function(req,res) {
       req.query(query, (err, rows) => {
         if (err) throw err;
         console.log("Row inserted with id");
-        res.send({message: "Question Updated"});
+        res.send({message: 'Success'});
     });
     })
     .catch(function (err) {
@@ -414,7 +414,7 @@ app.post('/api/insertquestion', express.json() , function(req,res) {
         req.query(query, (err, rows) => {
               if (err) throw err;
               console.log("Row inserted with id");
-              res.send({message: "Test Saved"});
+              res.send({message: "Success"});
           });
     }
     )

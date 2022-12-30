@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const CreateQuestion = (props) => {
   const [questiondata,setquestiondata] = useState({question:'' , difficulty:'' , answer:'' , option1: '' ,  option2: '',  option3: '',  option4: '' })
-  const [isEdit, setisEdit] = useState(false);
+  const sendmessage = (show , message ) => props.callback( show , message)
   const onChangeHandler = (event) => {
     setquestiondata(prevState=>({
       ...prevState,
@@ -45,9 +45,14 @@ const CreateQuestion = (props) => {
     try {
       const resp = await axios.post('http://localhost:5000/api/insertquestion',questiondata);
       console.log(resp.data.message);
+      if (resp.data.message === 'Success') {
+        sendmessage(true , true)
+        props.setopen()
+      }
      }
      catch (error) {
          console.log(error.response);
+         sendmessage(true , false)
      }
   }
   else {
