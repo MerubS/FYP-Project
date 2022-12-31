@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const CreateQuestion = (props) => {
-  const [questiondata,setquestiondata] = useState({question:'' , difficulty:'' , answer:'' , option1: '' ,  option2: '',  option3: '',  option4: '' })
+  const [examiner] = JSON.parse(localStorage.getItem('examiner'))
+  const [questiondata,setquestiondata] = useState({examinerid:examiner.examiner_id, question:'' , difficulty:'' , answer:'' , option1: '' ,  option2: '',  option3: '',  option4: '' })
   const sendmessage = (show , message ) => props.callback( show , message)
   const onChangeHandler = (event) => {
     setquestiondata(prevState=>({
@@ -43,7 +44,7 @@ const CreateQuestion = (props) => {
     questiondata.option2 !== '' && questiondata.option3 !== '' && questiondata.option4 !== '' ){
       
     try {
-      const resp = await axios.post('http://localhost:5000/api/insertquestion',questiondata);
+      const resp = await axios.post('http://localhost:5000/api/question/CreateQuestion',questiondata);
       console.log(resp.data.message);
       if (resp.data.message === 'Success') {
         sendmessage(true , true)

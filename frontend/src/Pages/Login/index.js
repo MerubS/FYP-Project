@@ -1,8 +1,10 @@
 import { Typography , TextField , Button , Grid} from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import hi from '../../Images/login.svg';
 const Login = () => {
+   const navigate = useNavigate();
    const [userdetails , setuserdetails] = useState({cnic:'' , password: ''})
    const [errors , seterrors] =  useState({cnic:'' , password:''})
    const [disable, setdisable] = useState(true);
@@ -17,7 +19,8 @@ const Login = () => {
             console.log(resp.data.message);
             let validation = resp.data.output;
             if (validation.length == 1) {
-               //push to dashboard
+               localStorage.setItem('examiner',JSON.stringify(validation))
+               navigate("/dashboard");
             }
            }
            catch (error) {

@@ -1,6 +1,5 @@
 import { Button , Grid } from "@mui/material";
 import axios from "axios";
-import Stack from '@mui/material/Stack';
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,11 +10,13 @@ import { useState, useEffect } from "react";
 const OngoingExam = (props) => {
   const [currrow , setcurrrow] = useState();
   const [rows,setrows] = useState([]);
+  const [examiner] = JSON.parse(localStorage.getItem('examiner'));
 
   useEffect(() => {
-    axios.get('/api/retreive')
+    console.log(examiner);
+    axios.get('/api/test/getAllTest',{params:{id:examiner.examiner_id}})
     .then(function (response) {
-      setrows(response.data.recordset);
+      setrows(response.data.output);
     })
 
     }, []);
@@ -24,12 +25,11 @@ const OngoingExam = (props) => {
     const sendmessage = (show , message ) => props.callbackmessage( show , message)
 
     const deletetest = () => {
-      axios.get('/api/deletetest',{params:{id:currrow.test_id}})
+      axios.get('/api/test/DeleteTest',{params:{tid:currrow.test_id , eid:examiner.examiner_id}})
     .then(function (response) {
       console.log(response.message); 
       if (response.data.message === 'Success') {
         sendmessage(true , true)
-        props.setopen()
       }
       else {
         sendmessage(true , false)

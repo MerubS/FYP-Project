@@ -2,15 +2,17 @@ var sql = require("mssql");
 const { sqlConfig } = require("../config");
 
 const getAllQuestion = ((req,res)=>{
-    try {sql.connect(sqlConfig)    
+   let examinerid = req.query.id;
+    try {
+      sql.connect(sqlConfig)    
         .then(function () {
             console.log('CONNECTED');
             var req = new sql.Request();
             req.verbose = true;
-            req.input('eid' , 2)
+            req.input('eid' , examinerid)
             req.execute("getAllQuestion" , (err,result) => {
               console.log("Recordset" , result.recordset);
-              res.send({message: "Success"});
+              res.send({message: "Success", output: result.recordset});
             })
       })
     }
@@ -19,8 +21,29 @@ const getAllQuestion = ((req,res)=>{
       }
 })
 
+const getQuestionbyTestId = ((req,res)=> {
+  let testid = req.query.id;
+  try {
+    sql.connect(sqlConfig)    
+    .then(function () {
+        console.log('CONNECTED');
+        var req = new sql.Request();
+        req.verbose = true;
+        req.input('tid',testid)
+        req.execute("getQuestionbyTestId" , (err,result) => {
+          console.log("Recordset" , result.recordset);
+          res.send({message: "Success", output:result.recordset});
+        })
+  })
+}
+  catch (error) {
+    console.log(error)
+  }
+})
+
 const getQuestionbyId = ((req,res)=>{
-    let questionid = req.query.id;
+    let questionid = req.query.qid;
+    let examinerid = req.query.eid
     try {
       sql.connect(sqlConfig)    
       .then(function () {
@@ -28,10 +51,10 @@ const getQuestionbyId = ((req,res)=>{
           var req = new sql.Request();
           req.verbose = true;
           req.input('qid',questionid)
-          req.input('eid', 1)
+          req.input('eid', examinerid)
           req.execute("getQuestionbyId" , (err,result) => {
             console.log("Recordset" , result.recordset);
-            res.send({message: "Success"});
+            res.send({message: "Success", output:result.recordset});
           })
     })
   }
@@ -41,8 +64,9 @@ const getQuestionbyId = ((req,res)=>{
 })
 
 const CreateQuestion = ((req,res)=>{
-    let {question , difficulty , option1, option2,option3 , option4 , answer} = req.body;
+    let {question , difficulty , option1, option2,option3 , option4 , answer , examinerid} = req.body;
     let options = option1.concat(",",option2).concat(",",option3).concat(",",option4)
+    if (question && difficulty && answer && options && examinerid) {
     try {
       sql.connect(sqlConfig)    
       .then(function () {
@@ -54,7 +78,7 @@ const CreateQuestion = ((req,res)=>{
           req.input('qoptions', options)
           req.input('qanswer',answer)
           req.input('qid', 13)
-          req.input('eid', 1)
+          req.input('eid', examinerid)
           req.execute("CreateQuestion" , (err,result) => {
             console.log("Recordset" , result.recordset);
             res.send({message: "Success"});
@@ -64,12 +88,17 @@ const CreateQuestion = ((req,res)=>{
     catch (error) {
       console.log(error)
     }
+    }
+    else {
+      res.send({message:"Imcomplete data"});
+    }
 })
 
 const UpdateQuestion = ((req,res)=>{
+  let {question_id , question , answer , difficulty , option1 , option2 , option3 , option4 } = req.body;
+  let options = option1.concat(",",option2).concat(",",option3).concat(",",option4);
+  if (question_id , question , answer , difficulty , options) {
     try {
-        let {question_id , question , answer , difficulty , option1 , option2 , option3 , option4 } = req.body;
-        let options = option1.concat(",",option2).concat(",",option3).concat(",",option4);
         sql.connect(sqlConfig)    
         .then(function () {
             console.log('CONNECTED');
@@ -80,7 +109,6 @@ const UpdateQuestion = ((req,res)=>{
             req.input('qoptions', options)
             req.input('qanswer',answer)
             req.input('qid',question_id)
-            req.input('eid', 1)
             req.execute("UpdateQuestion" , (err,result) => {
               console.log("Recordset" , result.recordset);
               res.send({message: "Success"});
@@ -90,10 +118,16 @@ const UpdateQuestion = ((req,res)=>{
       catch (error) {
         console.log(error)
       }
+    }
+    else {
+      res.send({message:"Incomplete data"});
+    }
 })
 
 const DeleteQuestion = ((req,res)=>{
-    let questionid = req.query.id;
+    let questionid = req.query.qid;
+    let examinerid = req.query.eid;
+    if (questionid && examinerid) {
     try {
       sql.connect(sqlConfig)    
       .then(function () {
@@ -101,7 +135,7 @@ const DeleteQuestion = ((req,res)=>{
           var req = new sql.Request();
           req.verbose = true;
           req.input('qid', questionid)
-          req.input('eid' , 1)
+          req.input('eid' , examinerid)
           req.execute("DeleteQuestion" , (err,result) => {
             console.log("Recordset" , result.recordset);
             res.send({message: "Success"});
@@ -111,6 +145,10 @@ const DeleteQuestion = ((req,res)=>{
     catch (error) {
       console.log(error)
     }
+  }
+  else {
+    res.send({message:"Incomplete data"});
+  }
 })
 
 module.exports = {
@@ -118,5 +156,6 @@ module.exports = {
     getQuestionbyId,
     CreateQuestion,
     UpdateQuestion,
-    DeleteQuestion
+    DeleteQuestion,
+    getQuestionbyTestId
 }

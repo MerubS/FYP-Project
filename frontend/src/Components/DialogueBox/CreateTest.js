@@ -5,10 +5,9 @@ import { useState , useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const Createtest = (props) => {
-  console.log(props.open)
-  let  selectedRowsData;
+  const [examiner] = JSON.parse(localStorage.getItem('examiner'))
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
+  const [testdata , settestdata] = useState({examinerid:examiner.examiner_id , name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
   const sendmessage = (show , message ) => props.callback( show , message)
@@ -22,9 +21,9 @@ const Createtest = (props) => {
   };
 
   useEffect(() => {
-    axios.get('/api/retrievequestions')
+    axios.get('/api/question/getAllQuestion', {params:{id:examiner.examiner_id}})
     .then(function (response) {
-      setrows(response.data.recordset);
+      setrows(response.data.output);
   
       }) }, []);
   const columns = [
@@ -61,7 +60,7 @@ const onSubmit = async () => {
   && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
 
     try {
-      const resp = await axios.post('http://localhost:5000/api/inserttest',testdata);
+      const resp = await axios.post('http://localhost:5000/api/test/CreateTest',testdata);
       console.log(resp.data.message);
       if (resp.data.message === 'Success') {
         sendmessage(true , true)

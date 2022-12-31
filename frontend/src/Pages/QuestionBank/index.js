@@ -11,6 +11,7 @@ import { useState ,useEffect} from "react";
 import PositionedSnackbar from "../../Components/DialogueBox/Snackbar";
 
 const QuestionBank = () => {
+    const [examiner] = JSON.parse(localStorage.getItem('examiner'));
     const [open , setOpen] = useState(false);
     const [rows,setrows] = useState([]);
     const [currques , setcurrques] = useState();
@@ -26,15 +27,15 @@ const QuestionBank = () => {
 
 
     useEffect(() => {
-      axios.get('/api/retrievequestions')
+      axios.get('/api/question/getAllQuestion',{params:{id:examiner.examiner_id}})
     .then(function (response) {
-      setrows(response.data.recordset);
+      setrows(response.data.output);
     })
         }, []);
 
 
    const deleteques = () => {
-    axios.get('/api/deletequestion',{params:{id:currques.id}})
+    axios.get('/api/question/DeleteQuestion',{params:{qid:currques.id , eid:examiner.examiner_id}})
     .then(function (response) {
       console.log(response.data.message); 
       if (response.data.message === 'Success') {

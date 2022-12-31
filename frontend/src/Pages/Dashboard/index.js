@@ -25,11 +25,11 @@ const Dashboard = () => {
   const editingdata = (currrow , edit) => {
     console.log("Curr row" , currrow)
     setcurrrow(currrow) 
-    axios.get('/api/getQuestionbyTestid',{params:{id:currrow.test_id}})
+    axios.get('/api/question/getQuestionbyTestId',{params:{id:currrow.id}})
     .then(function (response) {
       setcurrrow(prevState=>({
         ...prevState,
-        selectedques : response.data.recordset
+        selectedques : response.data.output
       }))
      setisEdit(edit)
       })

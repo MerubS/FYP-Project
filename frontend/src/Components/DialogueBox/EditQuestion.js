@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const EditQuestion = (props) => {
   const chars = props.row.options.split(',');
-  console.log(chars)
   const [questiondata,setquestiondata] = useState({question_id:props.row.id , question:props.row.question , difficulty: props.row.difficulty  , answer:props.row.answer , option1: chars[0] ,  option2: chars[1],  option3: chars[2],  option4: chars[3] })
   console.log(props.row);
   const sendmessage = (show , message ) => props.callback( show , message)
@@ -45,7 +44,7 @@ const EditQuestion = (props) => {
     if (questiondata.question !== '' && questiondata.difficulty !== '' && questiondata.option1 !== '' &&
     questiondata.option2 !== '' && questiondata.option3 !== '' && questiondata.option4 !== '' ){
       try {
-        const resp = await axios.post('http://localhost:5000/api/updatequesdetails',questiondata);
+        const resp = await axios.post('http://localhost:5000/api/question/UpdateQuestion',questiondata);
         console.log(resp.data.message);
         if (resp.data.message === 'Success') {
           sendmessage(true , true)

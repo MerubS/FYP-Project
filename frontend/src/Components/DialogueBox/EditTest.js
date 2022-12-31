@@ -6,7 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 const Edittest = (props) => {
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({test_id:props.row.test_id , name:props.row.name , description:props.row.description  , nquestions:props.row.no_questions , difficulty:props.row.difficulty , timelimit:props.row.timelimit , unit:props.row.unit , selectedques:props.row.selectedques});
+  const [testdata , settestdata] = useState({examinerid:props.row.examiner_id , test_id:props.row.id , name:props.row.name , description:props.row.description  , nquestions:props.row.no_questions , difficulty:props.row.difficulty , timelimit:props.row.timelimit , unit:props.row.unit , selectedques:props.row.selectedques});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
   const sendmessage = (show , message ) => props.callback( show , message)
@@ -20,11 +20,13 @@ const Edittest = (props) => {
   };
 
   useEffect(() => {
-    axios.get('/api/retrievequestions')
+    console.log(props.row.examiner_id);
+    axios.get('/api/question/getAllQuestion',{params:{id:props.row.examiner_id}})
     .then(function (response) {
-      setrows(response.data.recordset);
+      setrows(response.data.output);
   
-      }) }, []);
+      }) 
+    }, []);
   const columns = [
       { field: 'question', headerName: 'Question', width: 300 },
       { field: 'difficulty', headerName: 'Difficulty', width: 130 },
@@ -55,11 +57,12 @@ const changehandler = (event) => {
 }
 
 const onSubmit = async () => {
+  console.log(testdata , props.row);
   if (testdata.name !== '' && testdata.description !== '' && testdata.nquestions!=='' 
   && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
 
     try {
-      const resp = await axios.post('http://localhost:5000/api/updatetestdetails',testdata);
+      const resp = await axios.post('http://localhost:5000/api/test/UpdateTest',testdata);
       console.log(resp.data.message);
       if (resp.data.message === 'Success') {
         sendmessage(true , true)

@@ -37,6 +37,7 @@ const CreateReport = ((req,res)=> {
 
 const getAllReport = ((req,res)=> {
     let examinerid = req.query.id;
+    if (examinerid) {
     try {
       sql.connect(sqlConfig)    
       .then(function () {
@@ -46,13 +47,17 @@ const getAllReport = ((req,res)=> {
           req.input('eid', examinerid)
           req.execute("getAllReport" , (err,result) => {
             console.log("Recordset" , result.recordset);
-            res.send({message: "Success"});
+            res.send({message: "Success", output:result.recordset});
           })
     })
   }
     catch (error) {
       console.log(error)
     }
+  }
+  else {
+    res.send({message:"Incomplete data"});
+  }
 })
 
 
