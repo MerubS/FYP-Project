@@ -2,15 +2,11 @@ const express = require("express");
 const PORT = process.env.PORT || 5000;
 const app = express();
 const databsase = require("./database"); 
-const test = require("./Controllers/TestController");  
-const report = require("./Controllers/ReportController");
-const question = require ("./Controllers/QuestionController");
 const reportroute = require("./Routes/Report.js");
 const questionroute = require("./Routes/Question.js");
 const candidateroute = require("./Routes/Candiate");
 const testroute = require("./Routes/Test");
-var sql = require("mssql");
-const { sqlConfig } = require("./config");
+const examinerroute = require("./Routes/Examiner");
 var cors = require('cors')
 
 app.listen(PORT, () => {
@@ -23,4 +19,5 @@ app.use(express.json());
 app.use('/api/report',reportroute);
 app.use('/api/question', questionroute);
 app.use('/api/candidate', candidateroute);
+app.use('/api/examiner', examinerroute);
 app.use('/api/test' , testroute);

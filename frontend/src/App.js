@@ -7,22 +7,22 @@ import Login from "./Pages/Login"
 import Register from "./Pages/Register"
 import Uploadpic from "./Pages/Uploadpic"
 import Test from "./Pages/Test"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
 import { useState , useEffect } from "react"
 
 function App() {
-  const [data, setData] = useState(null);
  
-
   return (
    <>
-      {/* <NavBar/>
-      <Home/>
-      <Login/> */}
-      {/* <Register/> */}
-      {/* <Test/> */}
-      <TabPanel/>
-      {/* <Footer/> */}
+    <Router>
+        <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/dashboard" element={<TabPanel />} />
+            <Route path="/register" element={<Register/>}/>
+            <Route path="/test" element={<Test/>}/>
+        </Routes>
+      </Router>
       
     </>
   );
