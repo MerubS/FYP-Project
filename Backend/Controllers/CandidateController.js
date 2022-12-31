@@ -1,28 +1,45 @@
 var sql = require("mssql");
 const { sqlConfig } = require("../config");
+const service = require("../Utils");
+
+
 
 const CreateCandidate = ((req,res)=>{
-    let {cnic , name , city , email , contact , dob , gender } = req.body;
+    let {registerdata , testdata } = req.body;
+    let startdate = new Date();
+    let enddate = service.getEndDate( startdate , testdata.timelimit , testdata.unit);
+    enddate = new Date(enddate);
+   
+    if (registerdata.cnic && registerdata.name && registerdata.city && registerdata.email && registerdata.dob && registerdata.gender && registerdata.contact
+      && testdata.test_id) {
     try {
       sql.connect(sqlConfig)    
       .then(function () {
           console.log('CONNECTED');
           var req = new sql.Request();
           req.verbose = true;
-          req.input('cid', sql.Numeric , cnic)
-          req.input('bdate', sql.Date , dob)
-          req.input('cname', sql.NVarChar(30), name)
-          req.input('cgender',sql.Char(1), gender)
-          req.input('ccity', sql.NVarChar(30), city)
-          req.input('cemail',sql.NVarChar(50),email)
+          req.input('cid', registerdata.cnic)
+          req.input('bdate',  registerdata.dob)
+          req.input('cname',  registerdata.name)
+          req.input('cgender', registerdata.gender)
+          req.input('ccity', registerdata.city)
+          req.input('cemail', registerdata.email)
+          req.input('tid', testdata.test_id)
+          req.input('tstart', startdate)
+          req.input('tend', enddate)
           req.execute("CreateCandidate" , (err,result) => {
-            console.log("Recordset" , result.recordset);
+            if (err) {console.log(err)}
+            console.log(result.recordset , result.rowsAffected);
             res.send({message: "Success"});
           })
     })
   }
     catch (error) {
       console.log(error)
+    }
+    }
+    else {
+      res.send({message:"Incomplete data"})
     }
 })
 

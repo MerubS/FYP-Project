@@ -33,7 +33,7 @@ const getTestbyId = ((req,res)=>{
         req.execute("getTestbyId" , (err,result) => {
           if (err) {console.log(err);}
           console.log("Recordset" , result.recordset);
-          res.send({message: "Success"});
+          res.send({message: "Success", output:result.recordset});
         })
   })
 }

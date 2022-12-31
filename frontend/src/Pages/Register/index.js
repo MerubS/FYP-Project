@@ -1,22 +1,24 @@
 import { Typography , TextField , Button , Box , Grid , Snackbar , Alert} from '@mui/material';
 import examiner from '../../Images/examiner.svg';
 import examinee from '../../Images/examinee.svg';
+import {useNavigate} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 
 const Register = () => {
+    const navigate = useNavigate();
     const [registerdata , setregisterdata] = useState({cnic:0 , name: '' , email: '' , contact: '' , dob:'' , city:'' , gender:''});
     const [errors , seterrors] = useState({cnic:'' , email: '' , contact: '' , dob:''}) 
     const [message, setmessage] = useState('');
     const [disable , setdisable] = useState(false);
-    const [testid , settesid] = useState('8');
+    const [testid , settesid] = useState('3');
 
     const onSubmit = async () => {
-        axios.get('/api/getbyidTest',{params:{id : testid}})
+        axios.get('/api/test/getTestbyId',{params:{id : testid}})
     .then(function (response) {
-      console.log(response.data.recordset)
-      let [testdata] = response.data.recordset
+      console.log(response.data.output)
+      let [testdata] = response.data.output
       if (testdata.status == 'ended     ') {
         setmessage("Test has been ended by the examiner");
       }
@@ -27,11 +29,16 @@ const Register = () => {
       localStorage.setItem('Testdetails', JSON.stringify(testdata));
          if (registerdata.city!=='' && registerdata.cnic!=='' && registerdata.contact!='' && registerdata.dob!='' && registerdata.email!=''
        && registerdata.gender!='' && registerdata.name!='') {
-        console.log("Send");
        try {
-        const resp = axios.post('http://localhost:5000/api/insertcandidate',registerdata);
-        console.log(resp.data.message);
-        // Push route to the test page
+          axios.post('http://localhost:5000/api/candidate/CreateCandidate',{registerdata, testdata}).then((response)=>{
+            console.log(response.data.message);
+            if (response.data.message === 'Success') {
+                localStorage.setItem('Candidatedetails', JSON.stringify(registerdata));
+                navigate('/test');
+            }
+        }). catch((err)=>{
+            console.log(err);
+        });
        }
        catch (error) {
            console.log(error.response);
@@ -46,12 +53,10 @@ const Register = () => {
 }
 
     useEffect(() => {
-     console.log(typeof registerdata.cnic);
+     console.log(registerdata);
   
       }, [registerdata]);
     const changehandler = (event) => {
-        console.log(event.target.id)
-        console.log(errors)
        switch (event.target.id) {
         case 'email':
             if (!/\S+@\S+\.\S+/.test(event.target.value)) {

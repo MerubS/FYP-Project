@@ -1,14 +1,15 @@
 const sql = require('mssql');
 const { sqlConfig } = require("../config");
 
-const CreateReport = ((req,res)=> {
+const UpdateReport = ((req,res)=> {
     let {question, answers, testid , canid } = req.body;
+    console.log(question, answers, testid , canid);
     let totalquestion = question.length;
         let correctanswers = 0;
         let rans ;
         answers.map((a)=>{
-          rans = a.value + '' + a.id + ','    
-          var r = question.find(item => item.question_id[0] === a.id)
+          rans = a.value + ' ' + a.id + ','    
+          var r = question.find(item => item.question_id === a.id)
           if (r.answer == a.value) {
             correctanswers++
           }
@@ -24,7 +25,8 @@ const CreateReport = ((req,res)=> {
           req.input('cid',  canid)
           req.input('rscore',  score )
           req.input('ranswers', rans )
-          req.execute("CreateCandidate" , (err,result) => {
+          req.execute("UpdateReport" , (err,result) => {
+            if (err) {console.log(err)}
             console.log("Recordset" , result.recordset);
             res.send({message: "Success"});
           })
@@ -60,8 +62,38 @@ const getAllReport = ((req,res)=> {
   }
 })
 
+const getReportbyId = ((req,res)=>{
+  let testid = req.query.tid;
+  let candidateid = req.query.cid;
+  console.log(testid , candidateid);
+  if (testid && candidateid) {
+    try {
+      sql.connect(sqlConfig)    
+      .then(function () {
+          console.log('CONNECTED');
+          var req = new sql.Request();
+          req.verbose = true;
+          req.input('tid', testid)
+          req.input('cid',candidateid)
+          req.execute("getReportbyId" , (err,result) => {
+            console.log("Recordset" , result.recordset);
+            res.send({message: "Success", output:result.recordset});
+          })
+    })
+  }
+    catch (error) {
+      console.log(error)
+    }
+  }
+  else {
+    res.send({message:"Incomplete data"});
+  }
+
+})
+
 
 module.exports = {
-    CreateReport,
-    getAllReport
+    UpdateReport,
+    getAllReport,
+    getReportbyId
 }

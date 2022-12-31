@@ -5,48 +5,67 @@ import axios from "axios";
 import { Box } from "@mui/system";
 
 const Test = () => {
-  const [question,setquestions] = useState();
+  const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
+  const test = JSON.parse(localStorage.getItem('Testdetails'));
+  const [question,setquestions] = useState('');
   const [loading , setloading] = useState(false);
   const [answers,setanswers] = useState([]);
+  const [timelimit , settimelimit] = useState('');
  useEffect(()=>{
-  axios.get('/api/getQuestionbyTestid',{params:{id : '1'}})
+  console.log(test , candidate);
+  axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
+    console.log(response.data.output)
+    let [data] = response.data.output;
+    let enddate = new Date(data.end_time);
+    let currdate = new Date();
+    console.log(enddate.getTime() - currdate.getTime() );
+    settimelimit(enddate.getTime() - currdate.getTime() );
+
+  })
+  axios.get('/api/question/getQuestionbyTestId',{params:{id : test.test_id}})
   .then(function (response) {
-    setquestions(response.data.recordset);
-    setloading(true);
+    console.log(response.data.output)
+    setquestions(response.data.output);
  })
 },[]);
 
 useEffect(()=>{
+  if (timelimit !== '' && question!== '') {
+    setloading(true);
+  }
+},[timelimit,question]);
+
+
+useEffect(()=>{
   console.log(answers)
-});
+},[answers]);
 
 const Completionist = () => <span> Times up !</span>;
 const submitHandler = async () => {
   console.log(answers)
   try {
-    const resp = await axios.post('http://localhost:5000/api/generatereport', {question , answers , testid:1 , canid:1}  );
-    console.log(resp.data.message);
+    axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
+    .then((response)=>{
+      console.log(response.message);
+    });
    }
    catch (error) {
        console.log(error.response);
    }
 }
 const changeHandler = (event, qid) => {
-  var r = answers.find(item => item.id === qid[0])
+  var r = answers.find(item => item.id === qid)
   if (r) {
-    let objIndex = answers.findIndex((obj => obj.id == qid[0]));
+    let objIndex = answers.findIndex((obj => obj.id == qid));
     answers[objIndex].value = event.target.value
 
   }
   else {
     setanswers([ // with a new array
     ...answers, // that contains all the old items
-    { value: event.target.value , id: qid[0]} // and one new item at the end
+    { value: event.target.value , id: qid} // and one new item at the end
   ])
   }
-  console.log(r)
-  
-  console.log(event.target.value, qid[0])
 }
 const renderer = ({ hours, minutes, seconds, completed }) => {
   if (completed) {
@@ -59,7 +78,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
   return (
     <Grid container justifyContent="Center" sx={{padding:'30px'}}>
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
-          <Countdown date={Date.now() + 5000} renderer={renderer} />
+         {loading && <Countdown date={Date.now() + timelimit} renderer={renderer} /> }
         </Grid>
         <Grid container sx={{borderRadius:10,padding:'50px',borderStyle:'solid',borderImage:'linear-gradient(to right bottom, #00264D, #02386E , #00498D) 1',borderWidth:'5px'}}>
         <Grid  item xs={12}>
@@ -71,12 +90,12 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         </Grid>
         <Grid item xs={12}>
         <form>
-    {loading && question.map((q)=>{
+    {loading && question.map((q,index)=>{
       let a = q.options.split(',')
       console.log(a)
       return (
       <FormControl sx={{display:'block', margin:'40px'}} variant="standard">
-        <FormLabel>{q.question}</FormLabel>
+        <FormLabel>{index+1}.  {q.question}</FormLabel>
         <RadioGroup
           aria-labelledby="demo-error-radios"
           name="quiz"
