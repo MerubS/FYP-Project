@@ -5,12 +5,11 @@ import { useState , useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 
 const Edittest = (props) => {
-  console.log(props.open)
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
+  const [testdata , settestdata] = useState({examinerid:props.row.examiner_id , test_id:props.row.id , name:props.row.name , description:props.row.description  , nquestions:props.row.no_questions , difficulty:props.row.difficulty , timelimit:props.row.timelimit , unit:props.row.unit , selectedques:props.row.selectedques});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
-
+  const sendmessage = (show , message ) => props.callback( show , message)
   const onRowsSelectionHandler = (ids) => {
     const selectedRowsData = ids.map((id) => rows.find((row) => row.id === id));
     settestdata(prevState=>({
@@ -21,11 +20,13 @@ const Edittest = (props) => {
   };
 
   useEffect(() => {
-    axios.get('/api/retrievequestions')
+    console.log(props.row.examiner_id);
+    axios.get('/api/question/getAllQuestion',{params:{id:props.row.examiner_id}})
     .then(function (response) {
-      setrows(response.data.recordset);
+      setrows(response.data.output);
   
-      }) }, []);
+      }) 
+    }, []);
   const columns = [
       { field: 'question', headerName: 'Question', width: 300 },
       { field: 'difficulty', headerName: 'Difficulty', width: 130 },
@@ -56,14 +57,21 @@ const changehandler = (event) => {
 }
 
 const onSubmit = async () => {
+  console.log(testdata , props.row);
   if (testdata.name !== '' && testdata.description !== '' && testdata.nquestions!=='' 
   && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
 
     try {
-    
+      const resp = await axios.post('http://localhost:5000/api/test/UpdateTest',testdata);
+      console.log(resp.data.message);
+      if (resp.data.message === 'Success') {
+        sendmessage(true , true)
+        props.setopen()
+      }
      }
      catch (error) {
          console.log(error.response);
+         sendmessage(true , false)
      }
   }
   else {
@@ -77,7 +85,7 @@ return (
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle> Create Test </DialogTitle>
+        <DialogTitle> Edit Test </DialogTitle>
         <DialogContent>
             <form>
         <Grid container justifyContent="space-evenly">
@@ -86,6 +94,7 @@ return (
               margin="dense"
               id="name"
               fullWidth
+              value={testdata.name}
               variant="outlined"
               label="Name"
               type="text"
@@ -98,6 +107,7 @@ return (
               margin="dense"
               id="description"
               fullWidth
+              value={testdata.description}
               variant="outlined"
               label= "Description"
               type="text"
@@ -112,6 +122,7 @@ return (
               error={errors.nquestions}
               helperText = {errors.nquestions}
               margin="dense"
+              value={testdata.nquestions}
               id="nquestions"
               fullWidth
               variant="outlined"
@@ -125,6 +136,7 @@ return (
               helperText = {errors.timelimit}
               margin="dense"
               id="timelimit"
+              value={testdata.timelimit}
               fullWidth
               variant="outlined"
               label= "Timelimit"
@@ -138,6 +150,7 @@ return (
               select
               margin="dense"
               id="difficulty"
+              value={testdata.difficulty}
               fullWidth
               variant="outlined"
               label= "Difficulty"
@@ -158,6 +171,7 @@ return (
               id="unit"
               fullWidth
               variant="outlined"
+              value={testdata.unit}
               label= "Unit"
               onChange={changehandler}
               SelectProps={{

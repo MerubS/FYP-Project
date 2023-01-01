@@ -1,28 +1,99 @@
-var sql = require("mssql");
+const sql = require('mssql');
 const { sqlConfig } = require("../config");
 
-const retrievereports = (req,res) => {
-    try {
-        sql.connect(sqlConfig)    
-        .then(function () {
-            var req = new sql.Request();
-            req.verbose = true;
-            req.query('SELECT report.test_id + report.candidate_id AS id, report.per_face,Report.per_gaze,Report.per_object,report.score,Test.name as testname, Candidate.name from Report , candidate , Test where Candidate.candidate_id = Report.candidate_id AND Report.test_id = Test.test_id').then(function (recordset) {
-                res.json(recordset);
-            })
-            .catch(function (err) {
-                console.error(err);
-            });
+const UpdateReport = ((req,res)=> {
+    let {question, answers, testid , canid } = req.body;
+    console.log(question, answers, testid , canid);
+    let totalquestion = question.length;
+        let correctanswers = 0;
+        let rans ;
+        answers.map((a)=>{
+          rans = a.value + ' ' + a.id + ','    
+          var r = question.find(item => item.question_id === a.id)
+          if (r.answer == a.value) {
+            correctanswers++
+          }
         })
-        .catch(function (err) {
-            console.error(err);
-        });
-    }
+      let score = (correctanswers/totalquestion)*100;
+    try {
+      sql.connect(sqlConfig)    
+      .then(function () {
+          console.log('CONNECTED');
+          var req = new sql.Request();
+          req.verbose = true;
+          req.input('tid', testid )
+          req.input('cid',  canid)
+          req.input('rscore',  score )
+          req.input('ranswers', rans )
+          req.execute("UpdateReport" , (err,result) => {
+            if (err) {console.log(err)}
+            console.log("Recordset" , result.recordset);
+            res.send({message: "Success"});
+          })
+    })
+  }
     catch (error) {
-        console.log(error)
+      console.log(error)
     }
-}
+})
+
+const getAllReport = ((req,res)=> {
+    let examinerid = req.query.id;
+    if (examinerid) {
+    try {
+      sql.connect(sqlConfig)    
+      .then(function () {
+          console.log('CONNECTED');
+          var req = new sql.Request();
+          req.verbose = true;
+          req.input('eid', examinerid)
+          req.execute("getAllReport" , (err,result) => {
+            console.log("Recordset" , result.recordset);
+            res.send({message: "Success", output:result.recordset});
+          })
+    })
+  }
+    catch (error) {
+      console.log(error)
+    }
+  }
+  else {
+    res.send({message:"Incomplete data"});
+  }
+})
+
+const getReportbyId = ((req,res)=>{
+  let testid = req.query.tid;
+  let candidateid = req.query.cid;
+  console.log(testid , candidateid);
+  if (testid && candidateid) {
+    try {
+      sql.connect(sqlConfig)    
+      .then(function () {
+          console.log('CONNECTED');
+          var req = new sql.Request();
+          req.verbose = true;
+          req.input('tid', testid)
+          req.input('cid',candidateid)
+          req.execute("getReportbyId" , (err,result) => {
+            console.log("Recordset" , result.recordset);
+            res.send({message: "Success", output:result.recordset});
+          })
+    })
+  }
+    catch (error) {
+      console.log(error)
+    }
+  }
+  else {
+    res.send({message:"Incomplete data"});
+  }
+
+})
+
 
 module.exports = {
-    retrievereports
+    UpdateReport,
+    getAllReport,
+    getReportbyId
 }

@@ -4,13 +4,11 @@ import { DataGrid } from '@mui/x-data-grid';
 import { useState ,useEffect} from "react";
 const Report = () => {
     const [rows,setrows] = useState([]);
+    const [examiner] = JSON.parse(localStorage.getItem('examiner'));
     useEffect(() => {
-      axios.get('/api/retrievereports')
+      axios.get('/api/report/getAllReport',{params:{id:examiner.examiner_id}})
       .then(function (response) {
-        setrows(response.data.recordset);
-        console.log(response.data.recordset);
-      })
-    
+        setrows(response.data.output) });
         }, []);
     const columns = [
         // { field: 'id', headerName: 'ID', width: 20 },

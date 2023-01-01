@@ -3,28 +3,77 @@ import { useEffect, useState } from "react";
 import Countdown from 'react-countdown';
 import axios from "axios";
 import { Box } from "@mui/system";
+import AlertDialog from "../../Components/DialogueBox/AlertDialogue";
 
 const Test = () => {
-  const [question,setquestions] = useState();
+  const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
+  const test = JSON.parse(localStorage.getItem('Testdetails'));
+  const [question,setquestions] = useState('');
   const [loading , setloading] = useState(false);
+  const [answers,setanswers] = useState([]);
+  const [timelimit , settimelimit] = useState('');
+  const [open,setopen] = useState(true);
+  const [disable , setdisable] = useState(timelimit === 0 ? true : false)
 
- useEffect(()=>{
-  axios.get('/api/getQuestionbyTestid',{params:{id : '1'}})
+  useEffect(()=>{
+  console.log(test , candidate);
+  axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
+    console.log(response.data.output)
+    let [data] = response.data.output;
+    let enddate = new Date(data.end_time);
+    let currdate = new Date();
+    console.log(enddate.getTime() - currdate.getTime() );
+    settimelimit(enddate.getTime() - currdate.getTime() );
+
+  })
+  axios.get('/api/question/getQuestionbyTestId',{params:{id : test.test_id}})
   .then(function (response) {
-    setquestions(response.data.recordset);
-    setloading(true);
+    console.log(response.data.output)
+    setquestions(response.data.output);
  })
 },[]);
 
 useEffect(()=>{
-  console.log(question)
-},[question]);
+  if (timelimit !== '' && question!== '') {
+    setloading(true);
+  }
+},[timelimit,question]);
 
-const Completionist = () => <span> Times up !</span>;
 
+useEffect(()=>{
+  console.log(answers)
+},[answers]);
+
+const submitHandler = async () => {
+  console.log(answers)
+  try {
+    axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
+    .then((response)=>{
+      console.log(response.data.message);
+    });
+   }
+   catch (error) {
+       console.log(error.response);
+   }
+}
+const changeHandler = (event, qid) => {
+  var r = answers.find(item => item.id === qid)
+  if (r) {
+    let objIndex = answers.findIndex((obj => obj.id == qid));
+    answers[objIndex].value = event.target.value
+
+  }
+  else {
+    setanswers([ 
+    ...answers, 
+    { value: event.target.value , id: qid} 
+  ])
+  }
+}
 const renderer = ({ hours, minutes, seconds, completed }) => {
   if (completed) {
-    return <Completionist />;
+    setdisable(true);
+    setopen(true);
   } else {
     return <span style={{fontsize:'50px', fontweight:'bold'}}>{hours}:{minutes}:{seconds}</span>;
   }
@@ -32,8 +81,9 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
 
   return (
     <Grid container justifyContent="Center" sx={{padding:'30px'}}>
+        {open && <AlertDialog open={open} setopen={()=>{setopen(false)}} submit={()=>{submitHandler()}} timeup={disable}/>}
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
-          <Countdown date={Date.now() + 5000} renderer={renderer} />
+         {loading && <Countdown date={Date.now() + timelimit} renderer={renderer} /> }
         </Grid>
         <Grid container sx={{borderRadius:10,padding:'50px',borderStyle:'solid',borderImage:'linear-gradient(to right bottom, #00264D, #02386E , #00498D) 1',borderWidth:'5px'}}>
         <Grid  item xs={12}>
@@ -45,27 +95,35 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         </Grid>
         <Grid item xs={12}>
         <form>
-    {loading && question.map((q)=>{
+    {loading && question.map((q,index)=>{
+      let a = q.options.split(',')
+      console.log(a)
       return (
       <FormControl sx={{display:'block', margin:'40px'}} variant="standard">
-        <FormLabel>{q.question}</FormLabel>
+        <FormLabel>{index+1}.  {q.question}</FormLabel>
         <RadioGroup
           aria-labelledby="demo-error-radios"
           name="quiz"
           // value={value}
-          // onChange={handleRadioChange}
-        >
-          <FormControlLabel value="best" control={<Radio />} label={q.options} />
-          <FormControlLabel value="worst" control={<Radio />} label={q.options} />
+          onChange={(e)=>{changeHandler(e,q.question_id)}}
+        >         
+        {a.map((o)=>{
+          return(
+       <FormControlLabel disabled={disable} value={o} control={<Radio />} label={o} />
+          )
+        })}
         </RadioGroup>
-        {/* <FormHelperText>{helperText}</FormHelperText> */}
-      </FormControl>
+        </FormControl>
+        )
+    }
+        
+     
       )
-    })}
+    }
          </form> 
          </Grid>
          <Grid container justifyContent='center'>
-         <Button variant="contained" style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}}> Submit </Button>
+         <Button variant="contained" onClick={()=>{setopen(true)}} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}} > Submit </Button>
          </Grid>
         </Grid>
     </Grid>
