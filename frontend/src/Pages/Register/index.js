@@ -8,11 +8,12 @@ import axios from 'axios';
 
 const Register = () => {
     const navigate = useNavigate();
+    const queryParams = new URLSearchParams(window.location.search);
     const [registerdata , setregisterdata] = useState({cnic:0 , name: '' , email: '' , contact: '' , dob:'' , city:'' , gender:''});
     const [errors , seterrors] = useState({cnic:'' , email: '' , contact: '' , dob:''}) 
     const [message, setmessage] = useState('');
     const [disable , setdisable] = useState(false);
-    const [testid , settesid] = useState('3');
+    const [testid , settesid] = useState(queryParams.get('test'));
 
     const onSubmit = async () => {
         axios.get('/api/test/getTestbyId',{params:{id : testid}})
@@ -51,6 +52,10 @@ const Register = () => {
       }
    })
 }
+
+useEffect(()=>{
+console.log(testid)
+},[testid])
 
     useEffect(() => {
      console.log(registerdata);

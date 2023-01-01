@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Countdown from 'react-countdown';
 import axios from "axios";
 import { Box } from "@mui/system";
+import AlertDialog from "../../Components/DialogueBox/AlertDialogue";
 
 const Test = () => {
   const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
@@ -11,7 +12,10 @@ const Test = () => {
   const [loading , setloading] = useState(false);
   const [answers,setanswers] = useState([]);
   const [timelimit , settimelimit] = useState('');
- useEffect(()=>{
+  const [open,setopen] = useState(true);
+  const [disable , setdisable] = useState(timelimit === 0 ? true : false)
+
+  useEffect(()=>{
   console.log(test , candidate);
   axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
     console.log(response.data.output)
@@ -40,13 +44,12 @@ useEffect(()=>{
   console.log(answers)
 },[answers]);
 
-const Completionist = () => <span> Times up !</span>;
 const submitHandler = async () => {
   console.log(answers)
   try {
     axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
     .then((response)=>{
-      console.log(response.message);
+      console.log(response.data.message);
     });
    }
    catch (error) {
@@ -61,15 +64,16 @@ const changeHandler = (event, qid) => {
 
   }
   else {
-    setanswers([ // with a new array
-    ...answers, // that contains all the old items
-    { value: event.target.value , id: qid} // and one new item at the end
+    setanswers([ 
+    ...answers, 
+    { value: event.target.value , id: qid} 
   ])
   }
 }
 const renderer = ({ hours, minutes, seconds, completed }) => {
   if (completed) {
-    return <Completionist />;
+    setdisable(true);
+    setopen(true);
   } else {
     return <span style={{fontsize:'50px', fontweight:'bold'}}>{hours}:{minutes}:{seconds}</span>;
   }
@@ -77,6 +81,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
 
   return (
     <Grid container justifyContent="Center" sx={{padding:'30px'}}>
+        {open && <AlertDialog open={open} setopen={()=>{setopen(false)}} submit={()=>{submitHandler()}} timeup={disable}/>}
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
          {loading && <Countdown date={Date.now() + timelimit} renderer={renderer} /> }
         </Grid>
@@ -104,7 +109,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         >         
         {a.map((o)=>{
           return(
-       <FormControlLabel value={o} control={<Radio />} label={o} />
+       <FormControlLabel disabled={disable} value={o} control={<Radio />} label={o} />
           )
         })}
         </RadioGroup>
@@ -118,7 +123,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
          </form> 
          </Grid>
          <Grid container justifyContent='center'>
-         <Button variant="contained" onClick={submitHandler} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}} > Submit </Button>
+         <Button variant="contained" onClick={()=>{setopen(true)}} style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)', color:'white' , marginBottom:'2px'}} > Submit </Button>
          </Grid>
         </Grid>
     </Grid>
