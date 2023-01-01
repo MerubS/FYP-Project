@@ -3,6 +3,7 @@ const { sqlConfig } = require("../config");
 
 const getAllTest = ((req,res)=>{
     const examinerid = req.query.id;
+    if (examinerid) {
     try {sql.connect(sqlConfig)    
         .then(function () {
             console.log('CONNECTED');
@@ -10,14 +11,15 @@ const getAllTest = ((req,res)=>{
             req.verbose = true;
             req.input('eid', examinerid)
             req.execute("getAllTest" , (err,result) => {
-              console.log("Recordset" , result.recordset);
-              res.send({message: "Success", output: result.recordset});
+                console.log("Recordset" , result.recordset);
+                res.send({message: "Success", output: result.recordset}); 
             })
       })
     }
       catch (error) {
         console.log(error)
       }
+    }
 })
 
 const getTestbyId = ((req,res)=>{
@@ -43,6 +45,7 @@ const getTestbyId = ((req,res)=>{
 
 const CreateTest = ((req,res)=>{
   let {name , description, nquestions, difficulty,timelimit , unit , selectedques , examinerid } = req.body;
+  console.log(selectedques);
   if (name && description && nquestions && difficulty && timelimit && unit && selectedques && examinerid) {
     try {
         
@@ -58,13 +61,16 @@ const CreateTest = ((req,res)=>{
             req.input('ttlimit',timelimit)
             req.input('tunit', unit)
             req.input('tstatus','created')
-            req.input('tid', 20)
             req.input('teid', examinerid)
             req.execute("CreateTest" , (err,result) => {
               if (err) {console.log(err);}
-              console.log("Recordset" , result.recordset);
-              res.send({message: "Success"});
+              console.log("Recordset" , result);
+              selectedques.map((ques)=>{
+                req.query()
+              })
+              // res.send({message: "Success"});
             })
+
       })
     }
       catch (error) {
@@ -117,6 +123,8 @@ const UpdateTest = ((req,res)=> {
 const DeleteTest = ((req,res)=>{
     let testid = req.query.tid;
     let examinerid = req.query.eid;
+    console.log(testid, examinerid)
+    if (testid && examinerid) {
     try {
       sql.connect(sqlConfig)    
       .then(function () {
@@ -134,6 +142,10 @@ const DeleteTest = ((req,res)=>{
     catch (error) {
       console.log(error)
     }
+  }
+  else {
+    console.log("Not enough data");
+  }
 })
 
 module.exports = {

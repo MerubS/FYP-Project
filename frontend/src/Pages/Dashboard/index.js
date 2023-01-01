@@ -23,7 +23,7 @@ const Dashboard = () => {
   }
 
   const editingdata = (currrow , edit) => {
-    console.log("Curr row" , currrow)
+    // console.log("Curr row" , currrow)
     setcurrrow(currrow) 
     axios.get('/api/question/getQuestionbyTestId',{params:{id:currrow.id}})
     .then(function (response) {
@@ -36,9 +36,9 @@ const Dashboard = () => {
     
   }
 
-  useEffect(()=>{
-   console.log("Data in dashboard" , currrow , isEdit)
-  },[currrow])
+  // useEffect(()=>{
+  //  console.log("Data in dashboard" , currrow , isEdit)
+  // },[currrow])
 
 
  return (

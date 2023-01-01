@@ -27,8 +27,10 @@ const UpdateReport = ((req,res)=> {
           req.input('ranswers', rans )
           req.execute("UpdateReport" , (err,result) => {
             if (err) {console.log(err)}
-            console.log("Recordset" , result.recordset);
-            res.send({message: "Success"});
+            if (result !== undefined) {
+              console.log("Recordset" , result.recordset);
+            res.send({message: "Success"});  
+            }
           })
     })
   }

@@ -56,7 +56,7 @@ const QuestionBank = () => {
        <Grid container sx={{height:'70vh',marginTop:2, marginBottom:6}}>
        <Grid container justifyContent='end' style={{padding:'3px'}}> 
     <Button color="primary" size="medium" onClick={deleteques} startIcon={<DeleteIcon />}> </Button>
-    <Button color="primary" size="medium" onClick={()=>{setisEdit(true)}} startIcon={<EditIcon />}> </Button>
+    <Button color="primary" size="medium" onClick={()=>{currques && setisEdit(true)}} startIcon={<EditIcon />}> </Button>
      </Grid>
     <DataGrid
      rows={rows}

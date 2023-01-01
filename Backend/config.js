@@ -2,7 +2,7 @@ const sqlConfig = {
     user: 'SIT',
     password: '34670',
     server: 'SHAIKHZ',
-    database: 'try',
+    database: 'FinalyearProject',
     pool:{
         max:5,
         min:0

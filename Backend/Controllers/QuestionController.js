@@ -3,6 +3,7 @@ const { sqlConfig } = require("../config");
 
 const getAllQuestion = ((req,res)=>{
    let examinerid = req.query.id;
+   console.log(examinerid);
     try {
       sql.connect(sqlConfig)    
         .then(function () {
@@ -11,8 +12,9 @@ const getAllQuestion = ((req,res)=>{
             req.verbose = true;
             req.input('eid' , examinerid)
             req.execute("getAllQuestion" , (err,result) => {
-              console.log("Recordset" , result.recordset);
-              res.send({message: "Success", output: result.recordset});
+              if (result !== undefined) {
+                res.send({message: "Success", output: result.recordset});
+              }
             })
       })
     }
@@ -77,7 +79,6 @@ const CreateQuestion = ((req,res)=>{
           req.input('qdifficulty', difficulty)
           req.input('qoptions', options)
           req.input('qanswer',answer)
-          req.input('qid', 13)
           req.input('eid', examinerid)
           req.execute("CreateQuestion" , (err,result) => {
             console.log("Recordset" , result.recordset);

@@ -12,7 +12,9 @@ const getExaminerbyId = ((req,res)=>{
           req.input('eid', examinerid)
           req.input('pass', password)
           req.execute("getExaminerbyId" , (err,result) => {
+            if (result.recordset) {
             console.log("Recordset" , result.recordset);
+            }
             res.send({message: "Success" , output: result.recordset});
           })
     })

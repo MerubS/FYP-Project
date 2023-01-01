@@ -5,7 +5,6 @@ import axios from 'axios';
 const EditQuestion = (props) => {
   const chars = props.row.options.split(',');
   const [questiondata,setquestiondata] = useState({question_id:props.row.id , question:props.row.question , difficulty: props.row.difficulty  , answer:props.row.answer , option1: chars[0] ,  option2: chars[1],  option3: chars[2],  option4: chars[3] })
-  console.log(props.row);
   const sendmessage = (show , message ) => props.callback( show , message)
   const onChangeHandler = (event) => {
     setquestiondata(prevState=>({

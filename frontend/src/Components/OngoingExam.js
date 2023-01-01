@@ -25,7 +25,8 @@ const OngoingExam = (props) => {
     const sendmessage = (show , message ) => props.callbackmessage( show , message)
 
     const deletetest = () => {
-      axios.get('/api/test/DeleteTest',{params:{tid:currrow.test_id , eid:examiner.examiner_id}})
+      console.log(currrow.id);
+      axios.get('/api/test/DeleteTest',{params:{tid:currrow.id , eid:examiner.examiner_id}})
     .then(function (response) {
       console.log(response.message); 
       if (response.data.message === 'Success') {
@@ -33,7 +34,7 @@ const OngoingExam = (props) => {
       }
       else {
         sendmessage(true , false)
-      }        // Check wont show message
+      }    
     })
     }
 
@@ -79,7 +80,7 @@ const OngoingExam = (props) => {
    <Grid sx={{height:'50vh'}}>
     <Grid container justifyContent='end' style={{padding:'5px'}}> 
     <Button color="primary" size="medium" onClick={deletetest} startIcon={<DeleteIcon />}> </Button>
-    <Button color="primary" size="medium" onClick={edittest} startIcon={<EditIcon />}> </Button>
+    <Button color="primary" size="medium" onClick={()=>{rows && edittest()}} startIcon={<EditIcon />}> </Button>
      </Grid>
     <DataGrid
      rows={rows}
