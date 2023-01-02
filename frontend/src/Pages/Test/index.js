@@ -33,30 +33,47 @@ const Test = () => {
     autoConnect: false,
   });  
 
-
-  const sendData = async (data) => {
-    await socket.emit("identification", {
+  const   sendData = async (data) => {
+      socket.emit("identification", {
        id: candidate.cnic,
        data: data,
      });
+
    };
+    
 
-
-
-  const capture = () => {
       
+
+      socket.on("SEND_LIVE_STREAM", async(result) => {
+        console.log(result) 
+        console.log('ABCD')    
+        let im = webcamRef.current.getScreenshot();
+        im = im.substring(23, im.length);
+        // socket.emit("identification" , picture) 
+        await sendData(im)
+       });
+
        
-    const interval = setInterval(() => {
-
-      let im = webcamRef.current.getScreenshot();
-      im = im.substring(23, im.length);
-      sendData(im)
-      console.log(im)
-      
-    }, interval_ms);
+ 
 
 
- }
+      const sleep = ms => new Promise(
+        resolve => setTimeout(resolve, ms)
+      );
+
+  const startStream = () => {
+
+    socket.connect();
+  
+        let im = webcamRef.current.getScreenshot();
+        im = im.substring(23, im.length);
+        socket.emit("identification" , {
+          data: im,
+          id: candidate.cnic
+        })
+   
+  }
+
 
 
  /////////////////////////// Streaming
@@ -64,7 +81,9 @@ const Test = () => {
   useEffect(() =>{
 
   socket.connect();       ///////// connect to socket
-    
+  
+  console.log("PAGE STARTED");
+  
 
   console.log(test , candidate);
   axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
@@ -80,7 +99,7 @@ const Test = () => {
   .then(function (response) {
     console.log(response.data.output)
     setquestions(response.data.output);
-    capture();          ///////// capture
+    // capture();          ///////// capture
  })
 },[]);
 
@@ -138,6 +157,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         <Webcam audio={false}  height={300} ref={webcamRef} screenshotFormat="image/jpeg" width={300} videoConstraints={videoConstraints}/>
         {open && <AlertDialog open={open} setopen={()=>{setopen(false)}} submit={()=>{submitHandler()}} timeup={disable}/>}
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
+        <button onClick={startStream}/>
          {loading && <Countdown date={Date.now()+3000000} renderer={renderer} /> }
         </Grid>
         <Grid container sx={{borderRadius:10,padding:'50px',borderStyle:'solid',borderImage:'linear-gradient(to right bottom, #00264D, #02386E , #00498D) 1',borderWidth:'5px'}}>

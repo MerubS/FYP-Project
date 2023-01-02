@@ -66,6 +66,7 @@ async def detect(fr):
         with open("test.txt","w") as f:
             f.write(f"Candidate ID : {name}")
         f.close
+
         # cv2.imshow("Detector", fr)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()

@@ -23,7 +23,7 @@ const CreateCandidate = ((req,res)=>{
           req.input('bdate',  registerdata.dob)
           req.input('cname',  registerdata.name)
           req.input('cgender', registerdata.gender)
-          req.input('contact',registerdata.contact)
+          req.input('contact' , (registerdata.contact))
           req.input('ccity', registerdata.city)
           req.input('cemail', registerdata.email)
           req.input('tid', testdata.test_id)
