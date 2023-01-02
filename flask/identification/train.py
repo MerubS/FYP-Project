@@ -5,13 +5,14 @@ import cv2
 import os
  
 
-
 # name = input('Enter Name : ')
 def train_model():
-    imagePaths = list(paths.list_images('images'))
 
-    if (len(imagePaths) == 0):
-        return "Failed"
+    if os.path.isdir('D:/FYP-Project/flask/identification'):
+        os.chdir('D:/FYP-Project/flask/identification')
+    
+    imagePaths = list(paths.list_images('images'))
+    print(imagePaths)
     data = {}
     encodings = []
     names = []
@@ -31,6 +32,8 @@ def train_model():
 
         root, name = os.path.dirname(imagePath).split('\\')
 
+        print(name)
+
         boxes = face_recognition.face_locations(rgb,model='hog')
         img_encodings = face_recognition.face_encodings(rgb, boxes)
         
@@ -46,3 +49,6 @@ def train_model():
         pickle.dump(data, fp)
 
     return "Success"
+
+if __name__ == '__main__':
+    train_model()

@@ -81,22 +81,30 @@ def transfer_data(message):
 
 @socketio.on('register_user')
 def register_user(payload):
-    print(payload)
+
+    if os.path.isdir('D:/FYP-Project/flask'):
+        print('1')
+        os.chdir('D:/FYP-Project/flask')
+    
+    global COUNT
     data = payload['data']
     id = payload['id']
 
     imgdata = base64.b64decode(data)
     img = Image.open(io.BytesIO(imgdata))
+    COUNT += 1
 
     if not os.path.exists(os.path.join(os.getcwd() ,  'identification' , 'images' , str(id))):
         os.mkdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
 
+    if os.path.isdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id))):
+        print('1')
+        os.chdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
 
-    img.save('{}.jpg'.format(COUNT+1))
+    print(os.getcwd())
+    img.save('{}.jpg'.format(str(COUNT)))
 
-    COUNT += 1
-
-    if COUNT == 30:
+    if COUNT == 29:
         COUNT = 0
         print("MODEL RESULT " ,train_model())
         socketio.stop()

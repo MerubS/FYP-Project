@@ -5,6 +5,8 @@ from time import sleep
 import cv2
 import os
 
+if os.path.isdir('D:/FYP-Project/flask/identification'):
+    os.chdir('D:/FYP-Project/flask/identification')
  
 cascPathface = os.path.dirname(
  cv2.__file__) + "/data/haarcascade_frontalface_alt2.xml"
