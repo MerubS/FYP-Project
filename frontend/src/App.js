@@ -7,7 +7,6 @@ import Uploadpic from "./Pages/Uploadpic"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
 import Thankyou from "./Pages/Thankyou";
-import Uploadpic from "./Pages/Uploadpic";
 
 //sdadsa
 function App() {

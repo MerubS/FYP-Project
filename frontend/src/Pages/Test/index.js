@@ -1,12 +1,17 @@
 import { Grid, FormControl, Button, FormLabel, RadioGroup , FormControlLabel , Radio, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useRef,useEffect, useState } from "react";
 import {useNavigate} from 'react-router-dom';
 import Countdown from 'react-countdown';
 import axios from "axios";
 import { Box } from "@mui/system";
 import AlertDialog from "../../Components/DialogueBox/AlertDialogue";
+import socketio from "socket.io-client";
+import Webcam from 'react-webcam';
 
 const Test = () => {
+
+
+  const interval_ms = 3000;
   const navigate = useNavigate();
   const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
   const test = JSON.parse(localStorage.getItem('Testdetails'));
@@ -17,7 +22,50 @@ const Test = () => {
   const [open,setopen] = useState(false);
   const [disable , setdisable] = useState(timelimit === 0 ? true : false)
 
-  useEffect(()=>{
+  const webcamRef = useRef(null);
+
+  const videoConstraints = {
+    width: 550,
+    height: 550,
+    facingMode: "user"
+  };
+  const socket = socketio("http://127.0.0.1:9000", {
+    autoConnect: false,
+  });  
+
+
+  const sendData = async (data) => {
+    await socket.emit("identification", {
+       id: candidate.cnic,
+       data: data,
+     });
+   };
+
+
+
+  const capture = () => {
+      
+       
+    const interval = setInterval(() => {
+
+      let im = webcamRef.current.getScreenshot();
+      im = im.substring(23, im.length);
+      sendData(im)
+      console.log(im)
+      
+    }, interval_ms);
+
+
+ }
+
+
+ /////////////////////////// Streaming
+
+  useEffect(() =>{
+
+  socket.connect();       ///////// connect to socket
+    
+
   console.log(test , candidate);
   axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
     console.log(response.data.output)
@@ -32,6 +80,7 @@ const Test = () => {
   .then(function (response) {
     console.log(response.data.output)
     setquestions(response.data.output);
+    capture();          ///////// capture
  })
 },[]);
 
@@ -39,6 +88,7 @@ useEffect(()=>{
   if (timelimit !== '' && question!== '') {
     setloading(true);
   }
+  
 },[timelimit,question]);
 
 
@@ -47,6 +97,7 @@ useEffect(()=>{
 },[answers]);
 
 const submitHandler = async () => {
+  
   console.log(answers)
   try {
     axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
@@ -84,9 +135,10 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
 
   return (
     <Grid container justifyContent="Center" sx={{padding:'30px'}}>
+        <Webcam audio={false}  height={300} ref={webcamRef} screenshotFormat="image/jpeg" width={300} videoConstraints={videoConstraints}/>
         {open && <AlertDialog open={open} setopen={()=>{setopen(false)}} submit={()=>{submitHandler()}} timeup={disable}/>}
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
-         {loading && <Countdown date={Date.now() + timelimit} renderer={renderer} /> }
+         {loading && <Countdown date={Date.now()+3000000} renderer={renderer} /> }
         </Grid>
         <Grid container sx={{borderRadius:10,padding:'50px',borderStyle:'solid',borderImage:'linear-gradient(to right bottom, #00264D, #02386E , #00498D) 1',borderWidth:'5px'}}>
         <Grid  item xs={12}>
