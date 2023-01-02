@@ -7,22 +7,37 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import tick from '../Icons/tick.svg';
 import Paper from '@mui/material/Paper';
-import { useState } from "react";
+import axios from 'axios';
+import { useState , useEffect } from "react";
 import { DataGrid } from '@mui/x-data-grid';
 const Exammanager = () => {
+  const [examiner] = JSON.parse(localStorage.getItem('examiner'));
   const [rows,setrows] = useState([]);
   const columns = [
-    // { field: 'test_id', headerName: 'ID', width: 20 },
     { field: 'name', headerName: 'Assessment Name', width: 130 },
-    { field: 'description', headerName: 'Time Started', width: 130 },
-    { field: 'status', headerName: 'Time Ended ', width: 130 },
+    { field: 'url', headerName: 'URL', width: 300 },
     { field: 'difficulty', headerName: 'Difficulty', width: 130 },
   ];
    
+  useEffect(() => {
+    console.log(examiner);
+    axios.get('/api/test/getAllTest',{params:{id:examiner.examiner_id}})
+    .then(function (response) {
+      let modrows = []
+      response.data.output.filter(n=> n.status === 'started   ').map((e)=>{
+        let URL = 'http://localhost:3000/register?test=' + e.id;
+        modrows.push({id:e.id , name:e.name , difficulty:e.difficulty , url:URL})
+      })
+      setrows(modrows);
+      
+    })
+
+    }, []);
+
 return (
   <Grid container>
 
-<Grid xs={12} sx={{height:'30vh',padding:'30px'}}>
+<Grid xs={12} sx={{height:'50vh',paddingTop:'40px'}}>
   <DataGrid
    rows={rows}
    columns={columns}

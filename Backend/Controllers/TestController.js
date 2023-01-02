@@ -1,5 +1,6 @@
 var sql = require("mssql");
 const { sqlConfig } = require("../config");
+const services = require("../Utils");
 
 const getAllTest = ((req,res)=>{
     const examinerid = req.query.id;
@@ -66,9 +67,11 @@ const CreateTest = ((req,res)=>{
               if (err) {console.log(err);}
               console.log("Recordset" , result);
               selectedques.map((ques)=>{
-                req.query()
+                req.query(`INSERT INTO TestContains (test_id,question_id) VALUES (${result.returnValue},${ques.id})`,(err,result)=>{
+                  console.log(result);
+                });
               })
-              // res.send({message: "Success"});
+              res.send({message: "Success"});
             })
 
       })
@@ -148,10 +151,45 @@ const DeleteTest = ((req,res)=>{
   }
 })
 
+const UpdateTestStatus = ((req,res)=>{
+  const {status, timelimit , unit , test_id} = req.body;
+  let start_date
+  let end_date
+  if (status === 'started') {
+    start_date = new Date();
+    end_date = services.getEndDate(start_date,timelimit,unit);
+    console.log("started", timelimit , unit, start_date , end_date , test_id);
+
+  }
+  try {
+    sql.connect(sqlConfig)    
+    .then(function () {
+        console.log('CONNECTED');
+        var req = new sql.Request();
+        req.verbose = true;
+        req.input('tid', test_id)
+        req.input('status' , status)
+        req.input('startdate', start_date)
+        req.input('enddate',end_date)
+        req.execute("UpdateStatusStarted" , (err,result) => {
+          console.log("Recordset" , result.recordset);
+          res.send({message: "Success"});
+        })
+  })
+}
+  catch (error) {
+    console.log(error)
+  }
+  
+  }
+
+)
+
 module.exports = {
     getAllTest,
     getTestbyId,
     CreateTest,
     UpdateTest,
-    DeleteTest
+    DeleteTest,
+    UpdateTestStatus
 }

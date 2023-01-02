@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend": "cd frontend && npm start",
     "backend": "cd backend && npm start",
-    "start":"concurrently - kill-others \"npm run backend\" \"npm run frontend\""
+    "start": "concurrently - kill-others \"npm run backend\" \"npm run frontend\""
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/MerubS/FYP-Project/issues"
   },
-  "homepage": "https://github.com/MerubS/FYP-Project#readme"
+  "homepage": "https://github.com/MerubS/FYP-Project#readme",
+  "dependencies": {
+    "react-webcam": "^7.0.1",
+    "socket.io-client": "^4.5.4"
+  }
 }

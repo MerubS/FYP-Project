@@ -17,6 +17,7 @@ const OngoingExam = (props) => {
     axios.get('/api/test/getAllTest',{params:{id:examiner.examiner_id}})
     .then(function (response) {
       setrows(response.data.output);
+      console.log("Started" , response.data.output.filter(n=> n.status === 'started   '))
     })
 
     }, []);
@@ -42,7 +43,7 @@ const OngoingExam = (props) => {
       console.log(curr)
       if (curr.status == 'created   ') {
         try {
-          const resp = await axios.post('http://localhost:5000/api/updatetest',{status:'started',test_id:curr.test_id , timelimit:curr.timelimit , unit: curr});
+          const resp = await axios.post('http://localhost:5000/api/test/UpdateTestStatus',{status:'started',test_id:curr.id , timelimit:curr.timelimit , unit: curr.unit});
           console.log(resp.data.message);
          }
          catch (error) {
@@ -52,7 +53,7 @@ const OngoingExam = (props) => {
 
       if (curr.status == 'started   ') {
         try {
-          const resp = await axios.post('http://localhost:5000/api/updatetest',{status:'ended',test_id:curr.test_id});
+          const resp = await axios.post('http://localhost:5000/api/test/UpdateTestStatus',{status:'ended',test_id:curr.id});
           console.log(resp.data.message);
          }
          catch (error) {

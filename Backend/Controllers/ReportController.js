@@ -3,12 +3,13 @@ const { sqlConfig } = require("../config");
 
 const UpdateReport = ((req,res)=> {
     let {question, answers, testid , canid } = req.body;
+    let enddate = new Date();
     console.log(question, answers, testid , canid);
     let totalquestion = question.length;
         let correctanswers = 0;
-        let rans ;
+        let rans = '' ;
         answers.map((a)=>{
-          rans = a.value + ' ' + a.id + ','    
+          rans = rans + a.value + '-' + a.id + ','    
           var r = question.find(item => item.question_id === a.id)
           if (r.answer == a.value) {
             correctanswers++
@@ -25,6 +26,7 @@ const UpdateReport = ((req,res)=> {
           req.input('cid',  canid)
           req.input('rscore',  score )
           req.input('ranswers', rans )
+          req.input('enddate',enddate)
           req.execute("UpdateReport" , (err,result) => {
             if (err) {console.log(err)}
             if (result !== undefined) {

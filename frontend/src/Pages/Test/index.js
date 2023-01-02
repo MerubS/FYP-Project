@@ -1,11 +1,13 @@
 import { Grid, FormControl, Button, FormLabel, RadioGroup , FormControlLabel , Radio, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import {useNavigate} from 'react-router-dom';
 import Countdown from 'react-countdown';
 import axios from "axios";
 import { Box } from "@mui/system";
 import AlertDialog from "../../Components/DialogueBox/AlertDialogue";
 
 const Test = () => {
+  const navigate = useNavigate();
   const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
   const test = JSON.parse(localStorage.getItem('Testdetails'));
   const [question,setquestions] = useState('');
@@ -50,6 +52,7 @@ const submitHandler = async () => {
     axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
     .then((response)=>{
       console.log(response.data.message);
+      navigate('/thankyou');
     });
    }
    catch (error) {
