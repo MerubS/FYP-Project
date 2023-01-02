@@ -54,8 +54,8 @@ async def detect(fr):
                 
                 name = data["name"][i]
                 counts[name] = counts.get(name, 0) + 1
-            name = max(counts, key=counts.get)
 
+            name = max(counts, key=counts.get)
 
         names.append(name)
     
@@ -63,7 +63,9 @@ async def detect(fr):
             cv2.rectangle(fr, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(fr, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
-
-        cv2.imshow("Detector", fr)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        with open("test.txt","w") as f:
+            f.write(f"Candidate ID : {name}")
+        f.close
+        # cv2.imshow("Detector", fr)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
