@@ -9,6 +9,7 @@ const testroute = require("./Routes/Test");
 const examinerroute = require("./Routes/Examiner");
 var cors = require('cors')
 
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
   databsase.databaseconnection();

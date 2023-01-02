@@ -44,27 +44,25 @@ const Test = () => {
 
       
 
-      socket.on("SEND_LIVE_STREAM", async(result) => {
+      socket.on("SEND_LIVE_STREAM", async(result,result1) => {
         console.log(result) 
-        console.log('ABCD')    
+        // console.log('ABCD')    
         let im = webcamRef.current.getScreenshot();
         im = im.substring(23, im.length);
         // socket.emit("identification" , picture) 
         await sendData(im)
+
+        console.log(result1)
        });
 
        
  
 
 
-      const sleep = ms => new Promise(
-        resolve => setTimeout(resolve, ms)
-      );
 
   const startStream = () => {
-
     socket.connect();
-  
+
         let im = webcamRef.current.getScreenshot();
         im = im.substring(23, im.length);
         socket.emit("identification" , {

@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from . import module as m
-import time
+import time , os
 
 COUNTER = 0
 TOTAL_BLINKS = 0
@@ -24,7 +24,9 @@ async def main_func(frame):
     global rightmovement,leftmovement,nomovement
     # camera = cv.VideoCapture(cameraID)
 
-    print(rightmovement)
+    if os.path.isdir('D:/FYP-Project/flask/gaze'):
+        os.chdir('D:/FYP-Project/flask/gaze')        
+
     fourcc = cv.VideoWriter_fourcc(*'XVID')
     # f = camera.get(cv.CAP_PROP_FPS)
     # width = camera.get(cv.CAP_PROP_FRAME_WIDTH)
@@ -95,7 +97,6 @@ async def main_func(frame):
     
     # camera.release()
 
-    print(rightmovement)
     with open("test.txt","w") as f:
         totalmovement = leftmovement+rightmovement+nomovement
         f.write(f"Left Movement = "+str(leftmovement) + "\nNo Movement = "+ str(nomovement)+"\nRight Movement = "+str(rightmovement)+"\n\nLeft Movement "+str(round((leftmovement/totalmovement)*100,2))+"%"\

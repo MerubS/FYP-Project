@@ -109,12 +109,8 @@ def register_user(payload):
 
     if COUNT == 29:
         COUNT = 0
-        print("MODEL RESULT " ,train_model())
+        print("MODEL RESULT " , train_model())
         socketio.stop()
-
-
-
-
 
 # IDENTIFICATION
 @socketio.on('identification')
@@ -129,9 +125,22 @@ def get_identification(payload):
     imgdata = base64.b64decode(data)
     img = Image.open(io.BytesIO(imgdata))
     print("KHIZPUR")
-    result = asyncio.run(detect(np.array(img)))
-    print("KHIZPUR 2 number")
-    emit('SEND_LIVE_STREAM' , result)
+    
+    asyncio.run(tracking.main_func(np.array(img)))
+    asyncio.run(detect(np.array(img)))  
+
+    if os.path.isdir('D:/FYP-Project/flask'):
+        os.chdir('D:/FYP-Project/flask')
+
+    with open(os.path.join(os.getcwd() , 'identification' , 'test.txt')) as f1 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt')) as f2:
+        identification_result = f1.read()
+        gaze_result = f2.read()
+
+
+    print(identification_result)
+    print(gaze_result)
+    
+    emit('SEND_LIVE_STREAM' , (identification_result , gaze_result))
 
 @socketio.on_error_default
 def default_error_handler(e):

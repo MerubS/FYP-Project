@@ -50,5 +50,3 @@ def train_model():
 
     return "Success"
 
-if __name__ == '__main__':
-    train_model()

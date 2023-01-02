@@ -1,10 +1,10 @@
 var sql = require("mssql");
 const { sqlConfig } = require("../config");
 const service = require("../Utils");
+const {logger} = require("./../logger/createLog")
+const winston = require("winston");
 
-
-
-const CreateCandidate = ((req,res)=>{
+const CreateCandidate = async (req,res)=>{
     let {registerdata , testdata } = req.body;
     console.log(registerdata,testdata);
     let startdate = new Date();
@@ -43,8 +43,19 @@ const CreateCandidate = ((req,res)=>{
     else {
       res.send({message:"Incomplete data"})
     }
+}
+
+const SaveLogsOfCandidate = async (req , res)=>{
+  const {body} = req;
+
+  logger.log({
+    method: req.method,
+    level: 'info',
+    message: body,
 })
+}
 
 module.exports = {
-    CreateCandidate
+    CreateCandidate,
+    SaveLogsOfCandidate
 }
