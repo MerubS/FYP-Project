@@ -14,7 +14,7 @@ const Test = () => {
   const [loading , setloading] = useState(false);
   const [answers,setanswers] = useState([]);
   const [timelimit , settimelimit] = useState('');
-  const [open,setopen] = useState(true);
+  const [open,setopen] = useState(false);
   const [disable , setdisable] = useState(timelimit === 0 ? true : false)
 
   useEffect(()=>{

@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import Dashboard from '../Dashboard';
 import Report from '../Report';
 import QuestionBank from '../QuestionBank';
+import Navbar from '../../Components/Navbar';
+import Footer from '../../Components/Footer';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -42,7 +44,9 @@ export default function BasicTabs() {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <>
+    <Navbar> </Navbar>
+    <Box sx={{ width: '100%' , marginBottom:'50px'}}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Dashboard" {...a11yProps(0)} />
@@ -60,5 +64,8 @@ export default function BasicTabs() {
         <Report/>
       </TabPanel>
     </Box>
+    <Footer/>
+    </>
+    
   );
 }

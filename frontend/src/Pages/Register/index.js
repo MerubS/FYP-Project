@@ -35,7 +35,7 @@ const Register = () => {
             console.log(response.data.message);
             if (response.data.message === 'Success') {
                 localStorage.setItem('Candidatedetails', JSON.stringify(registerdata));
-                navigate('/test');
+                navigate('/upload');
             }
         }). catch((err)=>{
             console.log(err);

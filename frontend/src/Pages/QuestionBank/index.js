@@ -53,8 +53,8 @@ const QuestionBank = () => {
         {sbar.sopen && <PositionedSnackbar success={sbar.sstatus} open={sbar.sopen} handleClose={()=>{setsbar({sopen:false , sstatus:''})}}/>}
         <CreateQuestion open={open} setopen={()=>{setOpen(false)}} callback={showMessage}/>
         {isEdit && <EditQuestion open={isEdit} setopen={()=>{setisEdit(false)}} callback={showMessage} row={currques}/>}
-       <Grid container sx={{height:'70vh',marginTop:2, marginBottom:6}}>
-       <Grid container justifyContent='end' style={{padding:'3px'}}> 
+       <Grid container sx={{height:'70vh',marginTop:0.2, marginBottom:6}}>
+       <Grid container justifyContent='end' style={{padding:'2px'}}> 
     <Button color="primary" size="medium" onClick={deleteques} startIcon={<DeleteIcon />}> </Button>
     <Button color="primary" size="medium" onClick={()=>{currques && setisEdit(true)}} startIcon={<EditIcon />}> </Button>
      </Grid>

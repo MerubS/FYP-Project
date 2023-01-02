@@ -21,7 +21,7 @@ const Report = () => {
         { field: 'pass', headerName: 'Pass', width: 130 },
       ];
  return (
-    <Grid container sx={{height:'80vh',marginTop:3}}>
+    <Grid container sx={{height:'70vh',marginTop:3}}>
     <DataGrid
      rows={rows}
      columns={columns}
