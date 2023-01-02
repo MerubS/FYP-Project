@@ -82,38 +82,38 @@ def transfer_data(message):
     
     # emit('data', data, to=room, skip_sid=request.sid)
 
-# @socketio.on('register_user')
-# def register_user(payload):
+@socketio.on('register_user')
+def register_user(payload):
 
-#     if os.path.isdir('D:/FYP-Project/flask'):
-#         print('1')
-#         os.chdir('D:/FYP-Project/flask')
+    if os.path.isdir('D:/FYP-Project/flask'):
+        print('1')
+        os.chdir('D:/FYP-Project/flask')
     
-#     global COUNT
-#     data = payload['data']
-#     id = payload['id']
+    global COUNT
+    data = payload['data']
+    id = payload['id']
 
-#     imgdata = base64.b64decode(data)
-#     img = Image.open(io.BytesIO(imgdata))
-#     COUNT += 1
+    imgdata = base64.b64decode(data)
+    img = Image.open(io.BytesIO(imgdata))
+    COUNT += 1
 
-#     if not os.path.exists(os.path.join(os.getcwd() ,  'identification' , 'images' , str(id))):
-#         os.mkdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
+    if not os.path.exists(os.path.join(os.getcwd() ,  'identification' , 'images' , str(id))):
+        os.mkdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
 
-#     if os.path.isdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id))):
-#         print('1')
-#         os.chdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
+    if os.path.isdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id))):
+        print('1')
+        os.chdir(os.path.join(os.getcwd() , 'identification' , 'images' , str(id)))
 
-#     print(os.getcwd())
-#     img.save('{}.jpg'.format(str(COUNT)))
+    print(os.getcwd())
+    img.save('{}.jpg'.format(str(COUNT)))
 
-#     if COUNT == 29:
-#         COUNT = 0
-#         print("MODEL RESULT " ,train_model())
-#         socketio.stop()
+    if COUNT == 29:
+        COUNT = 0
+        print("MODEL RESULT " ,train_model())
+        socketio.stop()
 
 # IDENTIFICATION
-@socketio.on('register_user')
+@socketio.on('identification')
 def get_identification(payload):
 
     if os.path.isdir('D:/FYP-Project/flask'):
@@ -124,7 +124,7 @@ def get_identification(payload):
 
     imgdata = base64.b64decode(data)
     img = Image.open(io.BytesIO(imgdata))
-    
+
     asyncio.run (detect(np.array(img)))
 
 
