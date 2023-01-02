@@ -1,32 +1,32 @@
 import face_recognition
-from improve import adjust_brightness, adjust_dark_spots
+from . import improve 
 import pickle
 from time import sleep
 import cv2
 import os
 
-if os.path.isdir('D:/FYP-Project/flask/identification'):
-    os.chdir('D:/FYP-Project/flask/identification')
- 
-cascPathface = os.path.dirname(
- cv2.__file__) + "/data/haarcascade_frontalface_alt2.xml"
+async def detect(fr):
 
-faceCascade = cv2.CascadeClassifier(cascPathface)
+    if os.path.isdir('D:/FYP-Project/flask/identification'):
+        os.chdir('D:/FYP-Project/flask/identification')
+    
+    cascPathface = os.path.dirname(
+    cv2.__file__) + "/data/haarcascade_frontalface_alt2.xml"
+
+    faceCascade = cv2.CascadeClassifier(cascPathface)
 
 
-data = pickle.loads(open('face_enc', "rb").read())
+    data = pickle.loads(open('face_enc', "rb").read())
 
 
-print("Streaming started")
-video_capture = cv2.VideoCapture(0)
+    print("Streaming started")
+    # video_capture = cv2.VideoCapture(0)
 
-while True:
-
-    ret, fr = video_capture.read()
+    # ret, fr = video_capture.read()
     gray = cv2.cvtColor(fr, cv2.COLOR_BGR2GRAY)
 
-    gray = adjust_dark_spots(gray)
-    gray = adjust_brightness(gray)
+    gray = improve.adjust_dark_spots(gray)
+    gray = improve.adjust_brightness(gray)
 
     faces = faceCascade.detectMultiScale(gray,scaleFactor=1.1, minNeighbors=6,minSize=(160, 160), flags=cv2.CASCADE_SCALE_IMAGE)
 
@@ -44,7 +44,7 @@ while True:
         name = "Unknown"
         
         if True in matches:
-           
+        
             # print(matches)
             matchedIdxs = [i for (i, b) in enumerate(matches) if b]
             counts = {}
@@ -55,19 +55,15 @@ while True:
                 name = data["name"][i]
                 counts[name] = counts.get(name, 0) + 1
             name = max(counts, key=counts.get)
- 
- 
+
+
         names.append(name)
-       
+    
         for ((x, y, w, h), name) in zip(faces, names):
             cv2.rectangle(fr, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(fr, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
 
-    cv2.imshow("Detector", fr)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-
-video_capture.release()
-cv2.destroyAllWindows()
+        cv2.imshow("Detector", fr)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()

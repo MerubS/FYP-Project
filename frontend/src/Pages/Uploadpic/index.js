@@ -15,7 +15,6 @@ import Webcam from 'react-webcam';
 
 const Uploadpic = () => {
 
-
    const params = useParams();
    const studentId = "42401802299227";    /////////// Will come from backend
  
