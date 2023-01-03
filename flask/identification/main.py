@@ -15,6 +15,7 @@ async def detect(fr):
 
     faceCascade = cv2.CascadeClassifier(cascPathface)
 
+    
 
     data = pickle.loads(open('face_enc', "rb").read())
 

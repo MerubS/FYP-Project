@@ -47,12 +47,14 @@ const CreateCandidate = async (req,res)=>{
 
 const SaveLogsOfCandidate = async (req , res)=>{
   const {body} = req;
-
+  console.log("Body" , body)
   logger.log({
     method: req.method,
     level: 'info',
     message: body,
 })
+
+  res.send({})
 }
 
 module.exports = {

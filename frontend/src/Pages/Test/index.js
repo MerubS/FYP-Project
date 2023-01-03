@@ -44,9 +44,9 @@ const Test = () => {
 
       
 
-      socket.on("SEND_LIVE_STREAM", async(result,result1) => {
-        console.log(result) 
-        axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{result, result1}).then((response)=>{
+   socket.on("SEND_LIVE_STREAM", async(result,result1) => {
+        console.log("Result : ",result) 
+        await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{result, result1}).then((response)=>{
             console.log(response.data.message);
         })
         // console.log('ABCD')    
@@ -58,7 +58,7 @@ const Test = () => {
         console.log(result1)
        });
 
-       
+        
  
 
 
