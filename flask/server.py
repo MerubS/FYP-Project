@@ -13,6 +13,7 @@ import asyncio
 import requests , json
 from dotenv import load_dotenv
 from identification.main import detect
+from yolo.inference import perform_inference
 
 COUNT = 0
 load_dotenv()
@@ -121,6 +122,7 @@ def get_identification(payload):
     
     data = payload['data']
     id = payload['id']
+    message = payload['message']
 
     imgdata = base64.b64decode(data)
     img = Image.open(io.BytesIO(imgdata))
@@ -128,19 +130,27 @@ def get_identification(payload):
     
     asyncio.run(tracking.main_func(np.array(img)))
     asyncio.run(detect(np.array(img)))  
+    asyncio.run(perform_inference(img))
 
     if os.path.isdir('D:/FYP-Project/flask'):
         os.chdir('D:/FYP-Project/flask')
 
-    with open(os.path.join(os.getcwd() , 'identification' , 'test.txt')) as f1 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt')) as f2:
+    with open(os.path.join(os.getcwd() , 'identification' , 'test.txt')) as f1 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt')) as f2 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt')) as f3:
         identification_result = f1.read()
         gaze_result = f2.read()
-
+        inference_result = f3.read()
 
     print(identification_result)
     print(gaze_result)
+    print(inference_result)
     
-    emit('SEND_LIVE_STREAM' , (identification_result , gaze_result))
+    if message == 'TEST ENDED':
+        with open(os.path.join(os.getcwd() , 'identification' , 'test.txt') , 'w') as f1 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt') , 'w') as f2 , open(os.path.join(os.getcwd() , 'gaze' , 'test.txt') , 'w') as f3:
+            f1.write('')
+            f2.write('')
+            f3.write('')
+
+    emit('SEND_LIVE_STREAM' , (identification_result , gaze_result , inference_result , message))
 
 @socketio.on_error_default
 def default_error_handler(e):
