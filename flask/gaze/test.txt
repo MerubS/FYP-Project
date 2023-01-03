@@ -1,7 +1,7 @@
-Left Movement = 1
-No Movement = 89
-Right Movement = 1
+Left Movement = 9
+No Movement = 110
+Right Movement = 0
 
-Left Movement 1.1%
-No Movement 97.8%
-Right Movement 1.1%
+Left Movement 7.56%
+No Movement 92.44%
+Right Movement 0.0%
