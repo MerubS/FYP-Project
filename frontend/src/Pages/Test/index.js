@@ -36,9 +36,12 @@ const Test = () => {
   });  
 
   const   sendData = async (data) => {
+
+    console.log('send data : ', end)  
       socket.emit("identification", {
        id: candidate.cnic,
        data: data,
+       message : end
      });
 
    };
@@ -46,8 +49,10 @@ const Test = () => {
 
    socket.on("SEND_LIVE_STREAM", async(identification_result , gaze_result , inference_result , message) => {
         // console.log("Result : ",result) 
-        if (message === 'TEST ENDED') {
-            setinvigilance({face:identification_result , gaze:gaze_result , object:inference_result})
+        if (message === 'ACKNOWLEDGE') {
+          setend('ACKNOWLEDGE');
+          socket.disconnect()
+          setinvigilance({face:identification_result , gaze:gaze_result , object:inference_result})
         }
 
         await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{identification_result , gaze_result , inference_result}).then((response)=>{
@@ -65,7 +70,7 @@ const Test = () => {
       
   const startStream = () => {
     socket.connect();
-
+    console.log('StartSTREAM : ', end)  
         let im = webcamRef.current.getScreenshot();
         im = im.substring(23, im.length);
         socket.emit("identification" , {
@@ -114,7 +119,7 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-  if (end === 'TEST ENDED') {
+  if (end === 'ACKNOWLEDGE') {
      try {
     axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic , per_face:invigilance.face , per_object:invigilance.object , per_gaze:invigilance.gaze}  )
     .then((response)=>{
@@ -131,7 +136,7 @@ useEffect(()=>{
 const submitHandler = async () => {
   
   console.log(answers)
-  setend('ENDED')
+  setend('TEST ENDED')
   // try {
   //   axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
   //   .then((response)=>{
