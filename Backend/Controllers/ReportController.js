@@ -2,7 +2,7 @@ const sql = require('mssql');
 const { sqlConfig } = require("../config");
 
 const UpdateReport = ((req,res)=> {
-    let {question, answers, testid , canid } = req.body;
+    let {question, answers, testid , canid , per_face , per_object  , per_gaze } = req.body;
     let enddate = new Date();
     console.log(question, answers, testid , canid);
     let totalquestion = question.length;
@@ -27,6 +27,9 @@ const UpdateReport = ((req,res)=> {
           req.input('rscore',  score )
           req.input('ranswers', rans )
           req.input('enddate',enddate)
+          req.input('face',per_face)
+          req.input('object',per_object)
+          req.input('gaze',per_gaze)
           req.execute("UpdateReport" , (err,result) => {
             if (err) {console.log(err)}
             if (result !== undefined) {

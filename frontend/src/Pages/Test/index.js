@@ -20,7 +20,9 @@ const Test = () => {
   const [answers,setanswers] = useState([]);
   const [timelimit , settimelimit] = useState('');
   const [open,setopen] = useState(false);
+  const [end , setend] = useState('');
   const [disable , setdisable] = useState(timelimit === 0 ? true : false)
+  const [invigilance , setinvigilance] = useState({face:0 , gaze:0 , object:0})
 
   const webcamRef = useRef(null);
 
@@ -42,10 +44,14 @@ const Test = () => {
    };
     
 
-   socket.on("SEND_LIVE_STREAM", async(identification_result , gaze_result , inference_result) => {
+   socket.on("SEND_LIVE_STREAM", async(identification_result , gaze_result , inference_result , message) => {
         // console.log("Result : ",result) 
+        if (message === 'TEST ENDED') {
+            setinvigilance({face:identification_result , gaze:gaze_result , object:inference_result})
+        }
+
         await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{identification_result , gaze_result , inference_result}).then((response)=>{
-            console.log(response.data.message);
+            console.log(response.data.message);                         // get a message of stream ended then generate report
         })
         // console.log('ABCD')    
         let im = webcamRef.current.getScreenshot();
@@ -56,11 +62,7 @@ const Test = () => {
         // console.log(result1)
        });
 
-        
- 
-
-
-
+      
   const startStream = () => {
     socket.connect();
 
@@ -68,7 +70,8 @@ const Test = () => {
         im = im.substring(23, im.length);
         socket.emit("identification" , {
           data: im,
-          id: candidate.cnic
+          id: candidate.cnic,
+          message: end                              // assign state
         })
    
   }
@@ -111,14 +114,9 @@ useEffect(()=>{
 
 
 useEffect(()=>{
-  console.log(answers)
-},[answers]);
-
-const submitHandler = async () => {
-  
-  console.log(answers)
-  try {
-    axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
+  if (end === 'TEST ENDED') {
+     try {
+    axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic , per_face:invigilance.face , per_object:invigilance.object , per_gaze:invigilance.gaze}  )
     .then((response)=>{
       console.log(response.data.message);
       navigate('/thankyou');
@@ -127,6 +125,23 @@ const submitHandler = async () => {
    catch (error) {
        console.log(error.response);
    }
+  }
+},[end]);
+
+const submitHandler = async () => {
+  
+  console.log(answers)
+  setend('ENDED')
+  // try {
+  //   axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
+  //   .then((response)=>{
+  //     console.log(response.data.message);
+  //     navigate('/thankyou');
+  //   });
+  //  }
+  //  catch (error) {
+  //      console.log(error.response);
+  //  }
 }
 const changeHandler = (event, qid) => {
   var r = answers.find(item => item.id === qid)
