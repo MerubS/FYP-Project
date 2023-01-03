@@ -18,7 +18,7 @@ const Report = () => {
         { field: 'per_gaze', headerName: '% Gaze', width: 130 },
         { field: 'per_object', headerName: '% Object', width: 130 },
         { field: 'score', headerName: 'Score', width: 130 },
-        { field: 'pass', headerName: 'Pass', width: 130 },
+        // { field: 'pass', headerName: 'Pass', width: 130 },
       ];
  return (
     <Grid container sx={{height:'70vh',marginTop:3}}>

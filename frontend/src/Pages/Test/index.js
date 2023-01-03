@@ -31,107 +31,112 @@ const Test = () => {
     height: 550,
     facingMode: "user"
   };
-  const socket = socketio("http://127.0.0.1:9000", {
-    autoConnect: false,
-  });  
+//   const socket = socketio("http://127.0.0.1:9000", {
+//     autoConnect: false,
+//   });  
 
-  const   sendData = async (data) => {
-      socket.emit("identification", {
-       id: candidate.cnic,
-       data: data,
-     });
+//   const   sendData = async (data) => {
+//       socket.emit("identification", {
+//        id: candidate.cnic,
+//        data: data,
+//        message: end
+//      });
 
-   };
+//    };
     
 
-   socket.on("SEND_LIVE_STREAM", async(identification_result , gaze_result , inference_result , message) => {
-        // console.log("Result : ",result) 
-        if (message === 'TEST ENDED') {
-            setinvigilance({face:identification_result , gaze:gaze_result , object:inference_result})
-        }
+//    socket.on("SEND_LIVE_STREAM", async(identification_result , gaze_result , inference_result , message) => {
+//         // console.log("Result : ",result) 
+//         if (message === 'ACKNOWLEDGED') {
+//             socket.disconnect();
+//             setend('ACKNOWLEDGED')
+//             setinvigilance({face:identification_result , gaze:gaze_result , object:inference_result})
+//         }
 
-        await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{identification_result , gaze_result , inference_result}).then((response)=>{
-            console.log(response.data.message);                         // get a message of stream ended then generate report
-        })
-        // console.log('ABCD')    
-        let im = webcamRef.current.getScreenshot();
-        im = im.substring(23, im.length);
-        // socket.emit("identification" , picture) 
-        await sendData(im)
+//         await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{identification_result , gaze_result , inference_result}).then((response)=>{
+//             console.log(response.data.message);                         // get a message of stream ended then generate report
+//         })
+//         // console.log('ABCD')    
+//         let im = webcamRef.current.getScreenshot();
+//         im = im.substring(23, im.length);
+//         // socket.emit("identification" , picture) 
+//         await sendData(im)
         
-        // console.log(result1)
-       });
+//         // console.log(result1)
+//        });
 
       
-  const startStream = () => {
-    socket.connect();
+//   const startStream = () => {
+//     socket.connect();
 
-        let im = webcamRef.current.getScreenshot();
-        im = im.substring(23, im.length);
-        socket.emit("identification" , {
-          data: im,
-          id: candidate.cnic,
-          message: end                              // assign state
-        })
+//         let im = webcamRef.current.getScreenshot();
+//         im = im.substring(23, im.length);
+//         socket.emit("identification" , {
+//           data: im,
+//           id: candidate.cnic,
+//           message: end                              // assign state
+//         })
    
-  }
+//   }
 
 
 
- /////////////////////////// Streaming
+//  /////////////////////////// Streaming
 
-  useEffect(() =>{
+//   useEffect(() =>{
 
-  socket.connect();       ///////// connect to socket
+//   socket.connect();       ///////// connect to socket
   
-  console.log("PAGE STARTED");
+//   console.log("PAGE STARTED");
   
 
-  console.log(test , candidate);
-  axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
-    console.log(response.data.output)
-    let [data] = response.data.output;
-    let enddate = new Date(data.end_time);
-    let currdate = new Date();
-    console.log(enddate.getTime() - currdate.getTime() );
-    settimelimit(enddate.getTime() - currdate.getTime() );
+//   console.log(test , candidate);
+//   axios.get('/api/report/getReportbyId',{params:{tid:test.test_id , cid:candidate.cnic}}).then((response)=>{
+//     console.log(response.data.output)
+//     let [data] = response.data.output;
+//     let enddate = new Date(data.end_time);
+//     let currdate = new Date();
+//     console.log(enddate.getTime() - currdate.getTime() );
+//     settimelimit(enddate.getTime() - currdate.getTime() );
 
-  })
-  axios.get('/api/question/getQuestionbyTestId',{params:{id : test.test_id}})
-  .then(function (response) {
-    console.log(response.data.output)
-    setquestions(response.data.output);
-    // capture();          ///////// capture
- })
-},[]);
+//   })
+//   axios.get('/api/question/getQuestionbyTestId',{params:{id : test.test_id}})
+//   .then(function (response) {
+//     console.log(response.data.output)
+//     setquestions(response.data.output);
+//     // capture();          ///////// capture
+//  })
+// },[]);
+
+// useEffect(()=>{
+//   if (timelimit !== '' && question!== '') {
+//     setloading(true);
+//   }
+  
+// },[timelimit,question]);
+
+
+// useEffect(()=>{
+//   if (end === 'ACKNOWLEDGED') {
+//      try {
+//     axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic , per_face:invigilance.face , per_object:invigilance.object , per_gaze:invigilance.gaze}  )
+//     .then((response)=>{
+//       console.log(response.data.message);
+//       navigate('/thankyou');
+//     });
+//    }
+//    catch (error) {
+//        console.log(error.response);
+//    }
+//   }
+// },[end]);
 
 useEffect(()=>{
-  if (timelimit !== '' && question!== '') {
-    setloading(true);
-  }
-  
-},[timelimit,question]);
-
-
-useEffect(()=>{
-  if (end === 'TEST ENDED') {
-     try {
-    axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic , per_face:invigilance.face , per_object:invigilance.object , per_gaze:invigilance.gaze}  )
-    .then((response)=>{
-      console.log(response.data.message);
-      navigate('/thankyou');
-    });
-   }
-   catch (error) {
-       console.log(error.response);
-   }
-  }
-},[end]);
+  console.log(end)
+},[end])
 
 const submitHandler = async () => {
-  
-  console.log(answers)
-  setend('ENDED')
+  setend('TEST ENDED')
   // try {
   //   axios.post('http://localhost:5000/api/report/UpdateReport', {question , answers , testid:test.test_id , canid:candidate.cnic}  )
   //   .then((response)=>{
@@ -171,7 +176,7 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
         <Webcam audio={false}  height={300} ref={webcamRef} screenshotFormat="image/jpeg" width={300} videoConstraints={videoConstraints}/>
         {open && <AlertDialog open={open} setopen={()=>{setopen(false)}} submit={()=>{submitHandler()}} timeup={disable}/>}
         <Grid container justifyContent="center" sx={{padding:'30px'}} >
-        <button onClick={startStream}/>
+        {/* <button onClick={startStream}/> */}
          {loading && <Countdown date={Date.now()+3000000} renderer={renderer} /> }
         </Grid>
         <Grid container sx={{borderRadius:10,padding:'50px',borderStyle:'solid',borderImage:'linear-gradient(to right bottom, #00264D, #02386E , #00498D) 1',borderWidth:'5px'}}>

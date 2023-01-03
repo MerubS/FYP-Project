@@ -3,12 +3,14 @@ import examiner from '../../Images/examiner.svg';
 import examinee from '../../Images/examinee.svg';
 import {useNavigate} from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import Useauth from '../../Routes/Auth';
 import axios from 'axios';
 
 
 const Register = () => {
     const navigate = useNavigate();
     const queryParams = new URLSearchParams(window.location.search);
+    const authenticate= Useauth();
     const [registerdata , setregisterdata] = useState({cnic:0 , name: '' , email: '' , contact: '' , dob:'' , city:'' , gender:''});
     const [errors , seterrors] = useState({cnic:'' , email: '' , contact: '' , dob:''}) 
     const [message, setmessage] = useState('');
@@ -35,6 +37,7 @@ const Register = () => {
             console.log(response.data.message);
             if (response.data.message === 'Success') {
                 localStorage.setItem('Candidatedetails', JSON.stringify(registerdata));
+                authenticate.setcanauth(true);
                 navigate('/upload');
             }
         }). catch((err)=>{

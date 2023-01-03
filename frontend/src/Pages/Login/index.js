@@ -1,11 +1,13 @@
 import { Typography , TextField , Button , Grid} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Useauth from '../../Routes/Auth';
 import axios from 'axios';
 import hi from '../../Images/login.svg';
 const Login = () => {
    const navigate = useNavigate();
    const [userdetails , setuserdetails] = useState({cnic:'' , password: ''})
+   const authenticate= Useauth();
    const [errors , seterrors] =  useState({cnic:'' , password:''})
    const [disable, setdisable] = useState(true);
    useEffect(()=>{
@@ -20,6 +22,7 @@ const Login = () => {
             let validation = resp.data.output;
             if (validation.length == 1) {
                localStorage.setItem('examiner',JSON.stringify(validation))
+               authenticate.setauth(true);
                navigate("/dashboard");
             }
            }

@@ -10,6 +10,8 @@ const CreateCandidate = async (req,res)=>{
     let startdate = new Date();
     let enddate = service.getEndDate( startdate , testdata.timelimit , testdata.unit);
     enddate = new Date(enddate);
+    console.log(startdate);
+    console.log(enddate);
    
     if (registerdata.cnic && registerdata.name && registerdata.contact && registerdata.city && registerdata.email && registerdata.dob && registerdata.gender && registerdata.contact
       && testdata.test_id) {
@@ -23,7 +25,7 @@ const CreateCandidate = async (req,res)=>{
           req.input('bdate',  registerdata.dob)
           req.input('cname',  registerdata.name)
           req.input('cgender', registerdata.gender)
-          req.input('contact' , (registerdata.contact))
+          req.input('contact' , registerdata.contact)
           req.input('ccity', registerdata.city)
           req.input('cemail', registerdata.email)
           req.input('tid', testdata.test_id)
