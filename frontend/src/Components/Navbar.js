@@ -8,11 +8,11 @@ const Navbar = () => {
     <AppBar position="static" style={{background: 'linear-gradient(to right bottom, #00264D, #02386E , #00498D)'}}>
       <Toolbar sx={{ display: { xs: "flex" }, flexDirection: "row", justifyContent: "space-between"}}>
         <Typography variant="h6" component="div" > Smart Invigilance Tool </Typography>
-        {/* <Box component="span" sx={{display: { md: "flex" }, flexDirection: "row", justifyContent: "space-evenly",}}>
+        <Box component="span" sx={{display: { md: "flex" }, flexDirection: "row", justifyContent: "space-evenly",}}>
         <Typography variant="h8" component="div" sx={{paddingRight:'30px'}} >
-          Home
+          Logout
         </Typography>
-        <Typography variant="h8" component="div" sx={{paddingRight:'30px'}}>
+        {/* <Typography variant="h8" component="div" sx={{paddingRight:'30px'}}>
           About
         </Typography>
         <Typography variant="h8" component="div" sx={{paddingRight:'30px'}}>
@@ -20,8 +20,8 @@ const Navbar = () => {
         </Typography>
         <Typography variant="h8" component="div" sx={{paddingRight:'30px'}} >
           Sign in
-        </Typography>
-        </Box> */}
+        </Typography> */}
+        </Box>
         
       </Toolbar>
     </AppBar>

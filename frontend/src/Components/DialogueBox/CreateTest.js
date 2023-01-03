@@ -7,7 +7,7 @@ import { DataGrid } from '@mui/x-data-grid';
 const Createtest = (props) => {
   const [examiner] = JSON.parse(localStorage.getItem('examiner'))
   const [rows,setrows] = useState([]);
-  const [testdata , settestdata] = useState({examinerid:examiner.examiner_id , name:'' , description: '' , nquestions: '' , difficulty: '' , timelimit:'' , unit:'' , selectedques:''});
+  const [testdata , settestdata] = useState({examinerid:examiner.examiner_id , name:'' , description: '' , nquestions: 0 , difficulty: '' , timelimit:'' , unit:'' , selectedques:[]});
   const [errors, seterrors] = useState({nquestions: '' , timelimit:'' });
   const [disable , setdisable] = useState(false);
   const sendmessage = (show , message ) => props.callback( show , message)
@@ -33,10 +33,13 @@ const Createtest = (props) => {
 
 const changehandler = (event) => {
   console.log(testdata)
+  console.log(event.target.id)
+  console.log(parseInt(event.target.value))
+  console.log(testdata.selectedques.length)
   switch (event.target.id) {
     case 'nquestions':
-    case 'timelimit':
-      if (event.target.value < 0 ) {seterrors(prevState=>({
+    case 'timelimit': 
+    if (event.target.value < 0 ) {seterrors(prevState=>({
         ...prevState, 
         [event.target.id] : 'Cannot be negative'
       }))
@@ -55,8 +58,25 @@ const changehandler = (event) => {
        }));
 }
 
+useEffect(()=>{
+  if (testdata.selectedques.length !== parseInt(testdata.nquestions)) {
+    seterrors(prevState=>({
+      ...prevState, 
+      nquestions : 'Not equal to no.of selected questions'
+    }))
+  setdisable(true)
+    }
+  else {
+    seterrors(prevState=>({
+      ...prevState, 
+      nquestions : ''
+    }))
+    setdisable(false)
+  }
+},[testdata.nquestions,testdata.selectedques])
+
 const onSubmit = async () => {
-  if (testdata.name !== '' && testdata.description !== '' && testdata.nquestions!=='' 
+ if (testdata.name !== '' && testdata.description !== '' && testdata.nquestions!=='' 
   && testdata.difficulty!=='' && testdata.timelimit!=='' && testdata.unit!==''){
 
     try {
