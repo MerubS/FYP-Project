@@ -25,7 +25,7 @@ const Exammanager = () => {
     .then(function (response) {
       let modrows = []
       response.data.output.filter(n=> n.status === 'started   ').map((e)=>{
-        let URL = 'http://localhost:5000/register?test=' + e.id;
+        let URL = 'http://localhost:3000/register?test=' + e.id;
         modrows.push({id:e.id , name:e.name , difficulty:e.difficulty , url:URL})
       })
       setrows(modrows);
