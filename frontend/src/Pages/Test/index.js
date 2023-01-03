@@ -42,8 +42,6 @@ const Test = () => {
    };
     
 
-      
-
    socket.on("SEND_LIVE_STREAM", async(result,result1) => {
         console.log("Result : ",result) 
         await axios.post('http://localhost:5000/api/candidate/SaveCandidateLogs',{result, result1}).then((response)=>{

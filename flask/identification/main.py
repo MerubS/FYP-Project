@@ -15,7 +15,7 @@ async def detect(fr):
 
     faceCascade = cv2.CascadeClassifier(cascPathface)
 
-    
+
 
     data = pickle.loads(open('face_enc', "rb").read())
 
@@ -64,6 +64,14 @@ async def detect(fr):
             cv2.rectangle(fr, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(fr, name, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
+        # with open("test.txt", "r") as file:
+        #     lines = [line.rstrip() for line in file]
+        # file.close()
+
+        # with open("test.txt", "a") as file:
+        #     for obj in detections:
+        #         if obj not in lines:
+        #             file.write(obj + '\n')
         with open("test.txt","w") as f:
             f.write(f"Candidate ID : {name}")
         f.close
