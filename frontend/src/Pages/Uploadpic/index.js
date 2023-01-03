@@ -15,7 +15,7 @@ const Uploadpic = () => {
 
 
    const params = useParams();
-   const studentId = "42401802299227";    /////////// Will come from backend
+   const candidate = JSON.parse(localStorage.getItem('Candidatedetails'));
    const navigate = useNavigate();
    const webcamRef = useRef(null);
    const [picCount, SetPicCount] = useState(0);
@@ -43,7 +43,7 @@ const Uploadpic = () => {
  
    const sendData = async (data) => {
     await socket.emit("register_user", {
-       id: studentId,
+       id: candidate.cnic,
        data: data,
      });
    };
